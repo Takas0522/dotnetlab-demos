@@ -1,0 +1,14 @@
+<div class="contents">
+  <button mat-raised-button color="primary" routerLink="/user">
+    Add Item
+  </button>
+  <mat-list>
+    <ng-container *ngFor="let user of users$ | async">
+      <mat-list-item style="cursor: pointer;" routerLink="/user/{{user.id}}">
+        <mat-icon>arrow_forward_ios</mat-icon>
+        {{user.name}}({{user.email}})
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </mat-list>
+</div>

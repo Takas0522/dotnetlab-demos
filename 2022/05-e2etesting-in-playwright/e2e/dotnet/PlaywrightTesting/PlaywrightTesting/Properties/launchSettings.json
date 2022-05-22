@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PlaywrightTesting": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "FRONT_ENDPOINT": "http:/localhost:4200"
+      }
+    }
+  }
+}

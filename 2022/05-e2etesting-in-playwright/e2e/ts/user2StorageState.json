@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "sameSite": "None",
+      "name": "x-ms-cpim-csrf",
+      "value": "cVVPN3Y5V0lIY3I1Vy9YcXZUdTd6THYvcDVwdkc1RnJuOG9mdTd3OG9aNllveXFrNVNtUElJb2R1WmRGYnFHNnQ3ekJvNG5UUHJsc2R6MGd6UDZnZ1E9PTsyMDIyLTA1LTIxVDEzOjQ4OjM4LjE3MzUxMTJaO0lLbnZXYlE2bENJakFWWGx2cmZqVnc9PTt7Ik9yY2hlc3RyYXRpb25TdGVwIjoxfQ==",
+      "domain": ".devtakasb2c.b2clogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "x-ms-cpim-sso:devtakasb2c.onmicrosoft.com_0",
+      "value": "m1.49d2w3Q118pP032o./KedEzORH5amkYQoYHrJEg==.0.0zSsohhRJIt+90C5wcpk5/cpv5iXuN9ZhWJkfExTOaT4CQDQKUGLqWUT3r/+VkljYbOwW5FTnTkeW6qxxQlXNFHJyY0Uso/dsQx/IQGqCd7S92rLv236jK7XHhbGmVQ2oPVDeuJT/t3ReBH22JuXTWXFIWwDG/KvG2YQaj4qKBNlgVpxpBzwaY6IR8foklSHVeM/J4ltI5h6GsT9nmPt0P0L2mwmLrPZyovuPfU42z6oMgFiS6hPaUSyXNDe55mhTEcMgQTB+G2Wbj/yLU+DjpgOHodCF1aQTqAVQMyhl1CjDt7p93NUK8dgpelvzcBBQnej8CDV+hbMElGNNMOLhXEncrwGcM5Xvr7R1ziQ0h+CY/Ef2teRLC/mU0pLheCnsyHwBK1nhVCa46QNQIF2F7h0pSekUJl50JU9ItRVP7bf5QZMW8eFoiN9zLsudKrzs+IUIIufLra30NIc2Sc/BZiRufcZQBDp3WR64LYkGK+K4l7EAP3UB6knhCH1MhmXE/mGMVcN8SBli20WmFsMJU7k5/4wpV+4tOulhDpaTYVPGHIsCQd0l4vTRt/wNt5hZFxwgKYYpgexZisglnjo9sIs9rokNjJm5/BMZw+luQegcvBL2YXLGLEghsp1tMUNEL805zoDPDhekrruYnHYgMtL1kyklln8UZMzKnDZxP3NUjh3esHOVw==",
+      "domain": ".devtakasb2c.b2clogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true
+    }
+  ],
+  "origins": []
+}

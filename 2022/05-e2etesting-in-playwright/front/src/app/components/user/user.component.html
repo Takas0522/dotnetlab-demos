@@ -1,0 +1,45 @@
+<div class="contents">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div>
+      <mat-form-field>
+        <input matInput formControlName="id" type="number" placeholder="ID"/>
+        <mat-error *ngIf="idErrorsIsReq">
+          必須です
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="名前" />
+        <mat-error *ngIf="nameErrorsIsReq">
+          必須です
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <input matInput formControlName="email" placeholder="メールアドレス"/>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-select formControlName="userType" placeholder="ユーザー種別">
+          <mat-option [value]="0">
+            管理者
+          </mat-option>
+          <mat-option [value]="1">
+            一般ユーザー
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+      <button mat-raised-button color="primary" [disabled]="formGroup.invalid" type="submit">
+        データ登録
+      </button>
+      <button mat-raised-button color="warn" [disabled]="!isUpdate">
+        削除
+      </button>
+    </div>
+  </form>
+</div>
