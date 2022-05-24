@@ -12,14 +12,16 @@ test.describe('ユーザー情報の登録テスト', () => {
 
   test.use({ storageState: 'user1StorageState.json' });
 
-  extendsTest('ユーザー登録で不備があると画面上にエラーが表示され登録できないこと', async ({ userAction }) => {
+  extendsTest('ユーザー登録で不備があると画面上にエラーが表示され登録できないこと', async ({ userAction, page }) => {
+    await userAction.ページの状態が完了するまで待機();
     await userAction.ユーザー一覧ページに移動する();
     await userAction.一覧ページから新規登録ページに移動();
     await userAction.不備がある形でデータの入力();
     await userAction.エラーが表示されデータの登録が行えないこと();
   });
 
-  extendsTest('ユーザー登録を行うと一覧のデータ件数が増加していること', async ({ userAction }) => {
+  extendsTest('ユーザー登録を行うと一覧のデータ件数が増加していること', async ({ userAction, page }) => {
+    await userAction.ページの状態が完了するまで待機();
     await userAction.ユーザー一覧ページに移動しデータ件数を確認する();
     await userAction.一覧ページから新規登録ページに移動();
     await userAction.不備がない形でデータの入力と登録を行う();

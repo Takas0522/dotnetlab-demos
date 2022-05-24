@@ -9,7 +9,7 @@ test.describe('マルチユーザーのテスト(テストユーザー1)', () =>
 
     test('テストユーザー1でログインされていること', async ({ page, context }) => {
         await page.goto(`${baseUrl}`);
-        await page.waitForTimeout(5000);
+        await page.waitForSelector('.user-name');
         const inputctrl = page.locator('text=TestUser')
         expect(inputctrl).toHaveCount(1);
     });
@@ -21,7 +21,7 @@ test.describe('マルチユーザーのテスト(テストユーザー2)', () =>
 
     test('テストユーザー2でログインされていること', async ({ page, context }) => {
         await page.goto(`${baseUrl}`);
-        await page.waitForTimeout(5000);
+        await page.waitForSelector('.user-name');
         const inputctrl = page.locator('text=TestUser2')
         expect(inputctrl).toHaveCount(1);
     });

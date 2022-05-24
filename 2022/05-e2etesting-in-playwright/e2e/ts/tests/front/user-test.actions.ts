@@ -10,8 +10,14 @@ export class UserTestActions {
   ) {
   }
 
+  async ページの状態が完了するまで待機() {
+    await this.page.goto(`${baseUrl}/users`);
+    await this.page.waitForSelector('.user-name');
+  }
+
   async ユーザー一覧ページに移動する() {
     await this.page.goto(`${baseUrl}/users`);
+    await this.page.waitForSelector('.user-name');
     await this.page.waitForSelector(`mat-list-item`);
   }
 
@@ -41,8 +47,8 @@ export class UserTestActions {
 
   async ユーザー一覧ページに移動しデータ件数を確認する() {
     await this.page.goto(`${baseUrl}/users`);
+    await this.page.waitForSelector('.user-name');
     await this.page.waitForSelector(`mat-list-item`);
-    await this.page.waitForTimeout(1000);
     const loc = this.page.locator('mat-list-item');
     this.listCount = await loc.count();
   }
@@ -56,13 +62,12 @@ export class UserTestActions {
     await nameInput.fill(now);
     const submitbutton = this.page.locator('button', { hasText: 'データ登録' });
     await submitbutton.click();
-    await this.page.waitForTimeout(1000);
   }
 
   async ユーザー一覧ページのデータの件数が増えていること() {
     await this.page.goto(`${baseUrl}/users`);
+    await this.page.waitForSelector('.user-name');
     await this.page.waitForSelector(`mat-list-item`);
-    await this.page.waitForTimeout(1000);
     const loc = this.page.locator('mat-list-item');
     const count = await loc.count();
     expect(count).toBeGreaterThan(this.listCount);

@@ -1,5 +1,5 @@
 <mat-toolbar color="primary" class="mat-elevation-z8">
   <span>E2Eテストサンプル</span>
-  <span> - {{userName$ | async}}</span>
+  <span class="user-name" *ngIf="(userName$ | async) != ''"> - {{userName$ | async}}</span>
 </mat-toolbar>
 <router-outlet></router-outlet>

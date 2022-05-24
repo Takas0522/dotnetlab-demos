@@ -22,7 +22,7 @@ async function globalSetup (config: FullConfig) {
   await user1Page.fill('input[placeholder="Password"]', user1Pass);
   const user1button = user1Page.locator('button');
   await user1button.click();
-  await user1Page.waitForTimeout(2500);
+  await user1Page.waitForSelector(`app-root`);
   await user1Page.context().storageState({ path: 'user1StorageState.json' });
 
   const user2Page = await browser.newPage();
@@ -32,7 +32,7 @@ async function globalSetup (config: FullConfig) {
   await user2Page.fill('input[placeholder="Password"]', user2Pass);
   const user2button = user2Page.locator('button');
   await user2button.click();
-  await user2Page.waitForTimeout(2500);
+  await user2Page.waitForSelector(`app-root`);
   await user2Page.context().storageState({ path: 'user2StorageState.json' });
 
   await browser.close();
