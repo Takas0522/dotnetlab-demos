@@ -12,7 +12,6 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService
   ) {
-    console.log(document.cookie);
     this.setUp();
   }
   ngOnInit(): void {

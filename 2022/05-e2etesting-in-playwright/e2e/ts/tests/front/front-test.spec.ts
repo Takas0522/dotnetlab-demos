@@ -10,9 +10,9 @@ test.describe('ユーザー', () => {
   test('/usersエンドポイントアクセスでユーザーの一覧が表示されていること', async ({ page }) => {
     /* これだとネットワーク不調のとき失敗する */
     await page.goto(`${baseUrl}/users`);
-    // await page.waitForTimeout(3000);
+     await page.waitForTimeout(3000);
     /* Pageの遷移とコントロールの出現を待機するようにしておけば変更に強いコードになる */
-    await page.waitForSelector(`mat-list-item`);
+    // await page.waitForSelector(`mat-list-item`);
     const loc = page.locator('mat-list-item');
     const rowcn = await loc.count();
     expect(rowcn).toBeGreaterThan(0);
