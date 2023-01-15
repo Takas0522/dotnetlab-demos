@@ -13,12 +13,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  NPM_WORKING_DIR: './2023/01-try-turbo/'
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './2023/01-try-turbo/'
     strategy:
       matrix:
         node-version: [18.10.x]
@@ -37,6 +37,4 @@ jobs:
         path: './2023/01-try-turbo/node_modules'
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     - run: npm ci
-      working-directory: $(NPM_WORKING_DIR)
     - run: npm run lint
-      working-directory: $(NPM_WORKING_DIR)
