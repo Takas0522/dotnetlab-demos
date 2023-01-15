@@ -3,8 +3,5 @@
   "dest": "../../dist/controls-one",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "allowedNonPeerDependencies": [
-    "@devtakas/utility"
-  ]
+  }
 }

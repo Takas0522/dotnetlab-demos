@@ -8,12 +8,12 @@
   },
   "peerDependencies": {
     "@angular/common": "^15.1.0",
-    "@angular/core": "^15.1.0"
-  },
-  "dependencies": {
-    "tslib": "^2.3.0",
+    "@angular/core": "^15.1.0",
     "@devtakas/control-one": "^0.0.1",
     "@devtakas/control-two": "^0.0.1"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
   },
   "sideEffects": false
 }
