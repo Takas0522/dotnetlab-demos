@@ -9,6 +9,7 @@ on:
     branches: [ "main" ]
     paths:
       - '2023/01-try-turbo/**'
+      - '.github/workflows/2023-01-try-turbo.yml'
   pull_request:
     branches: [ "main" ]
 
