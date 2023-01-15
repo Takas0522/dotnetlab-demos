@@ -28,6 +28,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: ${{ WORKING_DIR }}/package-lock.json
     - run: npm ci
       working-directory: $WORKING_DIR
     - run: npm run lint
