@@ -28,7 +28,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: ${{ WORKING_DIR }}/package-lock.json
+    - uses: actions/cache@v3
+      id: node_modules_cache_id
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: './2023/01-try-turbo/node_modules'
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     - run: npm ci
       working-directory: $WORKING_DIR
     - run: npm run lint
