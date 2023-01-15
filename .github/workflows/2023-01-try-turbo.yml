@@ -37,6 +37,6 @@ jobs:
         path: './2023/01-try-turbo/node_modules'
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     - run: npm ci
-      working-directory: $WORKING_DIR
+      working-directory: ${{ WORKING_DIR }}
     - run: npm run lint
-      working-directory: $WORKING_DIR
+      working-directory:  ${{ WORKING_DIR }}
