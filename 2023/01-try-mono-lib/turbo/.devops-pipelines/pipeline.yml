@@ -4,7 +4,7 @@ trigger:
     - main
   paths:
     include:
-    - 2023/01-try-turbo/*
+    - 2023/01-try-mono-lib/turbo/*
 variables:
   npm_config_cache: $(Pipeline.Workspace)/.npm
 
@@ -25,10 +25,10 @@ stages:
       - task: Npm@1
         inputs:
           command: 'ci'
-          workingDir: '2023/01-try-turbo/'
+          workingDir: '2023/01-try-mono-lib/turbo'
 
       - task: Npm@1
         inputs:
           command: 'custom'
-          workingDir: '2023/01-try-turbo/'
+          workingDir: '2023/01-try-mono-lib/turbo'
           customCommand: 'lint'
