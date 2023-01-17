@@ -1,0 +1,39 @@
+{
+  "name": "controls-two",
+  "projectType": "library",
+  "sourceRoot": "libs/controls-two/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/controls-two/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/controls-two/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/controls-two/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/controls-two/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/controls-two/**/*.ts",
+          "libs/controls-two/**/*.html"
+        ]
+      }
+    }
+  }
+}
