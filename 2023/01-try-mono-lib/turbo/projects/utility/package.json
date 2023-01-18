@@ -1,0 +1,17 @@
+{
+  "name": "@devtakas/utility",
+  "version": "0.0.1",
+  "scripts": {
+    "build:utility": "cd ../../ && ng build utility",
+    "lint": "cd ../../ && ng lint utility",
+    "test": "cd ../../ && ng test utility --browsers=ChromeHeadless --watch=false"
+  },
+  "peerDependencies": {
+    "@angular/common": "^15.1.0",
+    "@angular/core": "^15.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

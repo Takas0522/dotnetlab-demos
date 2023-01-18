@@ -1,0 +1,37 @@
+{
+  "name": "base",
+  "projectType": "library",
+  "sourceRoot": "libs/base/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/base/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/base/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/base/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/base/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/base/**/*.ts", "libs/base/**/*.html"]
+      }
+    }
+  }
+}

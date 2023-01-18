@@ -1,0 +1,19 @@
+{
+  "name": "@devtakas/base",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "cd ../../ && ng build base",
+    "lint": "cd ../../ && ng lint base",
+    "test": "cd ../../ && ng test base --browsers=ChromeHeadless --watch=false"
+  },
+  "peerDependencies": {
+    "@angular/common": "^15.1.0",
+    "@angular/core": "^15.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@devtakas/control-one": "^0.0.1",
+    "@devtakas/control-two": "^0.0.1"
+  },
+  "sideEffects": false
+}

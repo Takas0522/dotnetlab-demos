@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build:utility": {
+      "dependsOn": ["^build:utility"],
+      "outputs": ["dist/**"]
+    },
+    "build:ct": {
+      "dependsOn": ["^build:ct"],
+      "outputs": ["dist/**"]
+    },
+    "build:co": {
+      "dependsOn": ["build:utility", "^build:co"],
+      "outputs": ["dist/**"]
+    },
+    "build": {
+      "dependsOn": ["build:co", "build:ct", "^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": ["build:co", "build:ct", "^test"],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "deploy": {
+      "dependsOn": ["build", "test", "lint"],
+      "outputs": []
+    }
+  }
+}

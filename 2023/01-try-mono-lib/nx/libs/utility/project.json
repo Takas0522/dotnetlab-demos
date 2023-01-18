@@ -1,0 +1,36 @@
+{
+  "name": "utility",
+  "projectType": "library",
+  "sourceRoot": "libs/utility/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/utility/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/utility/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/utility/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/utility/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/utility/**/*.ts", "libs/utility/**/*.html"]
+      }
+    }
+  }
+}

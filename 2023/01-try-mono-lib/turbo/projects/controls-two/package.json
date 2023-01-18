@@ -1,0 +1,17 @@
+{
+  "name": "@devtakas/control-two",
+  "version": "0.0.1",
+  "scripts": {
+    "build:ct": "cd ../../ && ng build controls-two",
+    "lint": "cd ../../ && ng lint controls-two",
+    "test": "cd ../../ && ng test controls-two --browsers=ChromeHeadless --watch=false"
+  },
+  "peerDependencies": {
+    "@angular/common": "^15.1.0",
+    "@angular/core": "^15.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}
