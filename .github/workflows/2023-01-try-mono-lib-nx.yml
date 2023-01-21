@@ -25,7 +25,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: nrwl/nx-set-shas@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -37,6 +36,9 @@ jobs:
       with:
         path: './2023/01-try-mono-lib/nx/node_modules'
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+    - uses: nrwl/nx-set-shas@v3
+      with:
+        working-directory: './2023/01-try-mono-lib/nx/'
     - run: npm ci
     - run: npm run test:ci
     - run: npm run build:ci
