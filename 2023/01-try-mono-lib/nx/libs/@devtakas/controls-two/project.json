@@ -1,0 +1,30 @@
+{
+  "name": "@devtakas/controls-two",
+  "projectType": "library",
+  "sourceRoot": "libs/@devtakas/controls-two/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/@devtakas/controls-two/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/@devtakas/controls-two/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/@devtakas/controls-two/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/@devtakas/controls-two/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    }
+  }
+}

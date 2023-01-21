@@ -1,0 +1,30 @@
+{
+  "name": "@devtakas/controls-one",
+  "projectType": "library",
+  "sourceRoot": "libs/@devtakas/controls-one/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/@devtakas/controls-one/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/@devtakas/controls-one/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/@devtakas/controls-one/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/@devtakas/controls-one/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    }
+  }
+}
