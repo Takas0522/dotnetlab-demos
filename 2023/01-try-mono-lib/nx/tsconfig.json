@@ -3,6 +3,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@devtakas/base": [
+        "dist/devtakas/base"
+      ],
       "@devtakas/controls-one": [
         "dist/devtakas/controls-one"
       ],
