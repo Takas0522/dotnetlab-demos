@@ -23,6 +23,7 @@
       "@devtakas/base": ["dist/base"],
       "@devtakas/controls-one": ["dist/controls-one"],
       "@devtakas/controls-two": ["dist/controls-two"],
+      "@devtakas/sample": ["libs/sample/src/index.ts"],
       "@devtakas/utility": ["dist/utility"]
     },
     "rootDir": "."

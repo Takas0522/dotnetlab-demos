@@ -5,7 +5,11 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "@devtakas/controls-one": ["../../dist/controls-one"],
+      "@devtakas/controls-two": ["../../dist/controls-two"]
+    },
   },
   "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"]
