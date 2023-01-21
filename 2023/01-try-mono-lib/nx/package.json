@@ -6,7 +6,9 @@
     "start": "nx serve",
     "build": "nx build",
     "watch": "nx build --watch --configuration development",
-    "test": "nx test"
+    "test": "nx test",
+    "test:ci": "nx affected:test --browsers=ChromeHeadless --watch=false",
+    "build:ci": "nx affected:build"
   },
   "private": true,
   "dependencies": {
