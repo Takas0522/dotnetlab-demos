@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "lint:lg": "lage lint",
-    "test:lg": "lage test"
+    "test:lg": "lage test",
+    "build:lg": "lage build"
   },
   "private": true,
   "dependencies": {

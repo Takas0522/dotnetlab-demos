@@ -44,6 +44,48 @@
           }
         }
       }
+    },
+    "@devtakas/control-one": {
+      "projectType": "library",
+      "root": "projects/devtakas/control-one",
+      "sourceRoot": "projects/devtakas/control-one/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/devtakas/control-one/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/devtakas/control-one/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/devtakas/control-one/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/devtakas/control-one/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/devtakas/control-one/**/*.ts",
+              "projects/devtakas/control-one/**/*.html"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
