@@ -8,5 +8,10 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "scripts": {
+    "lint": "cd ../../../ && ng lint @devtakas/utility",
+    "test": "cd ../../../ && ng test @devtakas/utility --browsers=ChromeHeadless --progress=false --watch=false",
+    "build": "cd ../../../ && ng build @devtakas/utility"
+  }
 }

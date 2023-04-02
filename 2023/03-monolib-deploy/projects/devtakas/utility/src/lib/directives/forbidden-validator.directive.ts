@@ -14,7 +14,7 @@ export const forbiddenNameValidator = (nameRe: RegExp): ValidatorFn => {
 })
 export class ForbiddenValidatorDirective implements Validator {
 
-  @Input('libForbiddenName')
+  @Input()
   protected forbiddenName = '';
 
   validate(control: AbstractControl): ValidationErrors | null {
