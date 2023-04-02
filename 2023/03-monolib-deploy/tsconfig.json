@@ -6,6 +6,9 @@
       "@devtakas/control-one": [
         "dist/devtakas/control-one"
       ],
+      "@devtakas/control-two": [
+        "dist/devtakas/control-two"
+      ],
       "@devtakas/utility": [
         "dist/devtakas/utility"
       ]
