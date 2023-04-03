@@ -1,6 +1,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@devtakas/base": ["dist/devtakas/base"],
+      "@devtakas/controls-one": ["dist/devtakas/controls-one"],
+      "@devtakas/controls-two": ["dist/devtakas/controls-two"],
+      "@devtakas/utility": ["dist/devtakas/utility"]
+    },
     "baseUrl": ".",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
@@ -19,12 +25,6 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
-    "paths": {
-      "@devtakas/base": ["dist/base"],
-      "@devtakas/controls-one": ["dist/controls-one"],
-      "@devtakas/controls-two": ["dist/controls-two"],
-      "@devtakas/utility": ["dist/utility"]
-    },
     "rootDir": "."
   },
   "angularCompilerOptions": {

@@ -7,7 +7,7 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "test", "lint"]
+        "cacheableOperations": ["build", "test"]
       }
     }
   },
@@ -18,8 +18,7 @@
       "default",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/**/*.spec.[jt]s",
-      "!{projectRoot}/karma.conf.js",
-      "!{projectRoot}/.eslintrc.json"
+      "!{projectRoot}/karma.conf.js"
     ]
   },
   "targetDefaults": {
@@ -29,9 +28,6 @@
     },
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/karma.conf.js"]
-    },
-    "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
     }
   }
 }

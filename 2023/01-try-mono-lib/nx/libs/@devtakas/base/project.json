@@ -1,0 +1,30 @@
+{
+  "name": "@devtakas/base",
+  "projectType": "library",
+  "sourceRoot": "libs/@devtakas/base/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "options": {
+        "project": "libs/@devtakas/base/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/@devtakas/base/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/@devtakas/base/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/@devtakas/base/tsconfig.spec.json",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    }
+  }
+}
