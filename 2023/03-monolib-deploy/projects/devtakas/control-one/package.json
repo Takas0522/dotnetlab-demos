@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^15.2.0",
-    "@angular/core": "^15.2.0",
-    "@devtakas/utility": "*"
+    "@angular/core": "^15.2.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@devtakas/utility": "*"
   },
   "sideEffects": false,
   "scripts": {
