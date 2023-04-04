@@ -39,11 +39,12 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     - run: npm run lint:lg
     - run: npm run test:lg
+    - run: npm run build:lg
       env:
         BACKFILL_CACHE_PROVIDER: azure-blob
         BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
         LAGE_WRITE_REMOTE_CACHE: true
-    - run: npm run build:lg
+    - run: echo $BACKFILL_CACHE_PROVIDER
       env:
         BACKFILL_CACHE_PROVIDER: azure-blob
         BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
