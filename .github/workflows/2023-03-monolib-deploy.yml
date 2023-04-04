@@ -39,7 +39,7 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     # - run: npm run lint:lg
     # - run: npm run test:lg
-    - run: lage build
+    - run: npx lage build
       env:
         BACKFILL_CACHE_PROVIDER: azure-blob
         BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
