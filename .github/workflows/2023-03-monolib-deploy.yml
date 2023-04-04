@@ -21,7 +21,7 @@ jobs:
         working-directory: './2023/03-monolib-deploy/'
     strategy:
       matrix:
-        node-version: [18.10.x]
+        node-version: [16.x]
 
     steps:
     - uses: actions/checkout@v3
