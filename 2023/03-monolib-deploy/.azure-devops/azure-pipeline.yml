@@ -23,20 +23,17 @@ steps:
 
 - script: npm ci
   workingDirectory: ./2023/03-monolib-deploy
-- script: npm run lint:lg
-  workingDirectory: ./2023/03-monolib-deploy
+- script: cd ./2023/03-monolib-deploy && npm run lint:lg
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
     LAGE_WRITE_REMOTE_CACHE: $(LAGE_WRITE_REMOTE_CACHE)
-- script: npm run test:lg
-  workingDirectory: ./2023/03-monolib-deploy
+- script: cd ./2023/03-monolib-deploy && npm run test:lg
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
     LAGE_WRITE_REMOTE_CACHE: $(LAGE_WRITE_REMOTE_CACHE)
-- script: npm run build:lg
-  workingDirectory: ./2023/03-monolib-deploy
+- script: cd ./2023/03-monolib-deploy && npm run build:lg
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
