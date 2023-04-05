@@ -15,24 +15,28 @@ variables:
 steps:
 - task: Cache@2
   inputs:
-    key: 'npm | "$(Agent.OS)" | package-lock.json'
+    key: 'npm | "$(Agent.OS)" | ./2023/03-monolib-deploy/package-lock.json'
     restoreKeys: |
        npm | "$(Agent.OS)"
     path: $(npm_config_cache)
   displayName: Cache npm
 
 - script: npm ci
+  workingDirectory: ./2023/03-monolib-deploy
 - script: npm run lint:lg
+  workingDirectory: ./2023/03-monolib-deploy
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
     LAGE_WRITE_REMOTE_CACHE: $(LAGE_WRITE_REMOTE_CACHE)
 - script: npm run test:lg
+  workingDirectory: ./2023/03-monolib-deploy
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
     LAGE_WRITE_REMOTE_CACHE: $(LAGE_WRITE_REMOTE_CACHE)
 - script: npm run build:lg
+  workingDirectory: ./2023/03-monolib-deploy
   env:
     BACKFILL_CACHE_PROVIDER: $(BACKFILL_CACHE_PROVIDER)
     BACKFILL_CACHE_PROVIDER_OPTIONS: $(BACKFILL_CACHE_PROVIDER_OPTIONS)
