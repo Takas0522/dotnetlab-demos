@@ -13,7 +13,8 @@
     "build:lg": "lage build --verbose",
     "check": "beachball check",
     "change": "beachball change",
-    "bump": "beachball bump"
+    "bump": "beachball bump",
+    "publish:bb": "beachball publish -n $NPM_AUTHTOKEN"
   },
   "private": true,
   "dependencies": {
