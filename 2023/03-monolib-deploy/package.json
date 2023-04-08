@@ -10,7 +10,10 @@
     "lint": "ng lint",
     "lint:lg": "lage lint --verbose",
     "test:lg": "lage test --verbose",
-    "build:lg": "lage build --verbose"
+    "build:lg": "lage build --verbose",
+    "check": "beachball check",
+    "change": "beachball change",
+    "bump": "beachball bump"
   },
   "private": true,
   "dependencies": {
