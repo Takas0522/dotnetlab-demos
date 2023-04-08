@@ -5,7 +5,7 @@ name: 202303-monolib-deploy
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     branches: [ "main" ]
     paths:
       - '2023/03-monolib-deploy/**'
@@ -27,7 +27,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        registry-url: https://npm.pkg.github.com/
     - run: npm ci
     - uses: actions/cache@v3
       id: node_modules_cache_id
