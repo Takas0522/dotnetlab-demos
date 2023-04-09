@@ -12,7 +12,7 @@
     "test:lg": "lage test --verbose",
     "build:lg": "lage build --verbose",
     "check": "beachball check",
-    "change": "beachball change",
+    "change": "beachball change -b main",
     "bump": "beachball bump",
     "publish:bb": "beachball publish -n $NPM_AUTHTOKEN"
   },

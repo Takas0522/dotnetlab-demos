@@ -45,10 +45,12 @@ jobs:
     - run: npm run publish:bb
       env:
         NPM_AUTHTOKEN: ${{secrets.GITHUB_TOKEN}}
-    - run: |
-      git config user.email siuser@example.com
-      git config user.name githubactions
-      git add .
-      git commit -m cichange
-      git push
+    - name: commit and push
+      run: |
+        git branch --contains
+        git config user.email siuser@example.com
+        git config user.name githubactions
+        git add .
+        git commit -m cichange
+        git push
 
