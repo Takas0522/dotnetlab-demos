@@ -45,7 +45,7 @@ jobs:
         LAGE_WRITE_REMOTE_CACHE: true
     - run: npm run publish:bb
       env:
-        NPM_AUTHTOKEN: ${{secrets.GITHUB_TOKEN}}
+        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: commit and push
       run: |
         git branch --contains
