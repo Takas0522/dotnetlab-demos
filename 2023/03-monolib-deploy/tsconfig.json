@@ -3,17 +3,17 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@devtakas/base": [
-        "dist/devtakas/base"
+      "@takas0522/base": [
+        "dist/takas0522/base"
       ],
-      "@devtakas/control-one": [
-        "dist/devtakas/control-one"
+      "@takas0522/control-one": [
+        "dist/takas0522/control-one"
       ],
-      "@devtakas/control-two": [
-        "dist/devtakas/control-two"
+      "@takas0522/control-two": [
+        "dist/takas0522/control-two"
       ],
-      "@devtakas/utility": [
-        "dist/devtakas/utility"
+      "@takas0522/utility": [
+        "dist/takas0522/utility"
       ]
     },
     "baseUrl": "./",

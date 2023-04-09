@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { add, minus } from '@devtakas/utility';
+import { add, minus } from '@takas0522/utility';
 
 @Component({
   selector: 'lib-base-control',

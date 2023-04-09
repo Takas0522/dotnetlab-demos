@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { forbiddenNameValidator } from '@devtakas/utility';
+import { forbiddenNameValidator } from '@takas0522/utility';
 
 @Component({
   selector: 'lib-custom-one',

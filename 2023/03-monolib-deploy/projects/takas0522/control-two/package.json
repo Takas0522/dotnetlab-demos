@@ -1,0 +1,20 @@
+{
+  "name": "@takas0522/control-two",
+  "version": "0.0.2",
+  "peerDependencies": {
+    "@angular/common": "^15.2.0",
+    "@angular/core": "^15.2.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "cd ../../../ && ng lint @takas0522/control-two",
+    "test": "cd ../../../ && ng test @takas0522/control-two --browsers=ChromeHeadless --progress=false --watch=false",
+    "build": "cd ../../../ && ng build @takas0522/control-two"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}

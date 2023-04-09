@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ControlOneModule } from '@devtakas/control-one';
-import { ControlTwoModule } from '@devtakas/control-two';
-import { UtilityModule } from '@devtakas/utility';
+import { ControlOneModule } from '@takas0522/control-one';
+import { ControlTwoModule } from '@takas0522/control-two';
+import { UtilityModule } from '@takas0522/utility';
 
 import { BaseControlComponent } from './base-control.component';
 

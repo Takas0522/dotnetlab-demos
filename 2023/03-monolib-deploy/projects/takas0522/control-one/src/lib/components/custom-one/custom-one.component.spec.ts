@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UtilityModule } from '@devtakas/utility';
+import { UtilityModule } from '@takas0522/utility';
 
 import { CustomOneComponent } from './custom-one.component';
 

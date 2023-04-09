@@ -1,0 +1,23 @@
+{
+  "name": "@takas0522/base",
+  "version": "0.0.2",
+  "peerDependencies": {
+    "@angular/common": "^15.2.0",
+    "@angular/core": "^15.2.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@takas0522/utility": "*",
+    "@takas0522/control-one": "*",
+    "@takas0522/control-two": "*"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "cd ../../../ && ng lint @takas0522/base",
+    "test": "cd ../../../ && ng test @takas0522/base --browsers=ChromeHeadless --progress=false --watch=false",
+    "build": "cd ../../../ && ng build @takas0522/base"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}

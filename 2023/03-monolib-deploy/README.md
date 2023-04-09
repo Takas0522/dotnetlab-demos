@@ -2,10 +2,10 @@
 
 ``` mermaid
 flowchart TD
-utl["@devtakas/utility"]
-co["@devtakas/control-one"]
-ct["@devtakas/control-two"]
-b["@devtakas/base"]
+utl["@takas0522/utility"]
+co["@takas0522/control-one"]
+ct["@takas0522/control-two"]
+b["@takas0522/base"]
 b --> ct
 b --> co
 b --> utl

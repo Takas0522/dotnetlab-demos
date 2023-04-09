@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "@devtakas/utility": {
+    "@takas0522/utility": {
       "projectType": "library",
-      "root": "projects/devtakas/utility",
-      "sourceRoot": "projects/devtakas/utility/src",
+      "root": "projects/takas0522/utility",
+      "sourceRoot": "projects/takas0522/utility/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/devtakas/utility/ng-package.json"
+            "project": "projects/takas0522/utility/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/devtakas/utility/tsconfig.lib.prod.json"
+              "tsConfig": "projects/takas0522/utility/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/devtakas/utility/tsconfig.lib.json"
+              "tsConfig": "projects/takas0522/utility/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,7 +27,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "projects/devtakas/utility/tsconfig.spec.json",
+            "tsConfig": "projects/takas0522/utility/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -38,30 +38,30 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/devtakas/utility/**/*.ts",
-              "projects/devtakas/utility/**/*.html"
+              "projects/takas0522/utility/**/*.ts",
+              "projects/takas0522/utility/**/*.html"
             ]
           }
         }
       }
     },
-    "@devtakas/control-one": {
+    "@takas0522/control-one": {
       "projectType": "library",
-      "root": "projects/devtakas/control-one",
-      "sourceRoot": "projects/devtakas/control-one/src",
+      "root": "projects/takas0522/control-one",
+      "sourceRoot": "projects/takas0522/control-one/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/devtakas/control-one/ng-package.json"
+            "project": "projects/takas0522/control-one/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/devtakas/control-one/tsconfig.lib.prod.json"
+              "tsConfig": "projects/takas0522/control-one/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/devtakas/control-one/tsconfig.lib.json"
+              "tsConfig": "projects/takas0522/control-one/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -69,7 +69,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "projects/devtakas/control-one/tsconfig.spec.json",
+            "tsConfig": "projects/takas0522/control-one/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -80,30 +80,30 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/devtakas/control-one/**/*.ts",
-              "projects/devtakas/control-one/**/*.html"
+              "projects/takas0522/control-one/**/*.ts",
+              "projects/takas0522/control-one/**/*.html"
             ]
           }
         }
       }
     },
-    "@devtakas/control-two": {
+    "@takas0522/control-two": {
       "projectType": "library",
-      "root": "projects/devtakas/control-two",
-      "sourceRoot": "projects/devtakas/control-two/src",
+      "root": "projects/takas0522/control-two",
+      "sourceRoot": "projects/takas0522/control-two/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/devtakas/control-two/ng-package.json"
+            "project": "projects/takas0522/control-two/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/devtakas/control-two/tsconfig.lib.prod.json"
+              "tsConfig": "projects/takas0522/control-two/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/devtakas/control-two/tsconfig.lib.json"
+              "tsConfig": "projects/takas0522/control-two/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -111,7 +111,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "projects/devtakas/control-two/tsconfig.spec.json",
+            "tsConfig": "projects/takas0522/control-two/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -122,30 +122,30 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/devtakas/control-two/**/*.ts",
-              "projects/devtakas/control-two/**/*.html"
+              "projects/takas0522/control-two/**/*.ts",
+              "projects/takas0522/control-two/**/*.html"
             ]
           }
         }
       }
     },
-    "@devtakas/base": {
+    "@takas0522/base": {
       "projectType": "library",
-      "root": "projects/devtakas/base",
-      "sourceRoot": "projects/devtakas/base/src",
+      "root": "projects/takas0522/base",
+      "sourceRoot": "projects/takas0522/base/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/devtakas/base/ng-package.json"
+            "project": "projects/takas0522/base/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/devtakas/base/tsconfig.lib.prod.json"
+              "tsConfig": "projects/takas0522/base/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/devtakas/base/tsconfig.lib.json"
+              "tsConfig": "projects/takas0522/base/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -153,7 +153,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "projects/devtakas/base/tsconfig.spec.json",
+            "tsConfig": "projects/takas0522/base/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -164,8 +164,8 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/devtakas/base/**/*.ts",
-              "projects/devtakas/base/**/*.html"
+              "projects/takas0522/base/**/*.ts",
+              "projects/takas0522/base/**/*.html"
             ]
           }
         }

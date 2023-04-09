@@ -1,10 +1,7 @@
 {
   "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../dist/devtakas/control-one",
+  "dest": "../../../dist/takas0522/control-two",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "allowedNonPeerDependencies": [
-    "@devtakas/utility"
-  ]
+  }
 }
