@@ -17,7 +17,7 @@
   },
   "publishConfig": {
     "access": "restricted",
-    "registry": "https://pkgs.dev.azure.com/takasample/_packaging/takasample/npm/registry/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "license": "UNLICENSED"
 }
