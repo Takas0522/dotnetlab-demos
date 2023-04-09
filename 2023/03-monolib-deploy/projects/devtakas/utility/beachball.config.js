@@ -1,3 +1,3 @@
 module.exports = {
-  branch: 'origin/main'
+  branch: 'main'
 };
