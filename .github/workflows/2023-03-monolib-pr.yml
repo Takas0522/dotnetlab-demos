@@ -47,6 +47,7 @@ jobs:
         NPM_AUTHTOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: commit and push
       run: |
+        git branch --contains
         git config user.email siuser@example.com
         git config user.name githubactions
         git add .
