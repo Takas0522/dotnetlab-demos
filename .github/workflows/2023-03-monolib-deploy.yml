@@ -15,7 +15,6 @@ env:
   BACKFILL_CACHE_PROVIDER: azure-blob
   BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
   LAGE_WRITE_REMOTE_CACHE: true
-  NODE_AUTH_TOKEN: ${{secrets.PACKAGE_PAT}}
 
 jobs:
   build:
@@ -57,5 +56,5 @@ jobs:
         git config user.email github-actions@github.com
         git config user.name github-actions
         npm run publish:bb
-      # env:
-      #   # NODE_AUTH_TOKEN: ${{secrets.PACKAGE_PAT}}
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
