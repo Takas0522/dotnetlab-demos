@@ -14,7 +14,7 @@
     "check": "beachball check",
     "change": "beachball change -b main",
     "bump": "beachball bump",
-    "publish:bb": "beachball publish -n $NPM_AUTHTOKEN"
+    "publish:bb": "beachball publish -y -n $NPM_AUTHTOKEN"
   },
   "private": true,
   "dependencies": {

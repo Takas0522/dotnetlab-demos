@@ -43,14 +43,10 @@ jobs:
         BACKFILL_CACHE_PROVIDER: azure-blob
         BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
         LAGE_WRITE_REMOTE_CACHE: true
-    - run: npm run publish:bb
-      env:
-        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: commit and push
       run: |
-        git branch --contains
-        git config user.email siuser@example.com
-        git config user.name githubactions
-        git add .
-        git commit -m cichange
-        git push
+        git config user.email github-actions@github.com
+        git config user.name github-actions
+        npm run publish:bb
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
