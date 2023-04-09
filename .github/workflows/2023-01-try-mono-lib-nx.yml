@@ -10,8 +10,6 @@ on:
     paths:
       - '2023/01-try-mono-lib/nx/**'
       - '.github/workflows/2023-01-try-mono-lib-nx.yml'
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
