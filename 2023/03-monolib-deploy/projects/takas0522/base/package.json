@@ -18,6 +18,8 @@
     "build": "cd ../../../ && ng build @takas0522/base"
   },
   "publishConfig": {
+    "access": "restricted",
     "registry": "https://npm.pkg.github.com/"
-  }
+  },
+  "license": "UNLICENSED"
 }
