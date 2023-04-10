@@ -21,7 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      contents: read
+      contents: write
+      deployments: write
+      repository-projects: write
+      pull-requests: write
     defaults:
       run:
         working-directory: './2023/03-monolib-deploy/'
