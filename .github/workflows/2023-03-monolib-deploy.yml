@@ -58,3 +58,4 @@ jobs:
         npm run publish:bb
       env:
         NPM_AUTHTOKEN: ${{secrets.PACKAGE_PAT}}
+        GITHUB_TOKENL: ${{secrets.GITHUB_TOKEN}}
