@@ -1,6 +1,27 @@
 {
-  "name": "@devtakas/control-two",
+  "name": "@takas0522/control-two",
   "entries": [
+    {
+      "date": "Mon, 10 Apr 2023 04:02:53 GMT",
+      "tag": "@takas0522/control-two_v0.0.6",
+      "version": "0.0.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/control-two",
+            "commit": "1d1232a08e3d13a6ff394a175432d6738dc98520",
+            "comment": "fix"
+          },
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/control-two",
+            "commit": "1d1232a08e3d13a6ff394a175432d6738dc98520",
+            "comment": "fix"
+          }
+        ]
+      }
+    },
     {
       "date": "Sat, 08 Apr 2023 07:02:56 GMT",
       "tag": "@devtakas/control-two_v0.0.2",
