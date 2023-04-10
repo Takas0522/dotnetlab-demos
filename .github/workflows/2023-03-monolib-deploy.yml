@@ -57,4 +57,4 @@ jobs:
         git config user.name github-actions
         npm run publish:bb
       env:
-        NPM_AUTHTOKEN: ${{secrets.GITHUB_TOKEN}}
+        NPM_AUTHTOKEN: ${{secrets.PACKAGE_PAT}}
