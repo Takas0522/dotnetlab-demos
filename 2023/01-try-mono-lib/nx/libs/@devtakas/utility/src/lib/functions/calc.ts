@@ -3,6 +3,7 @@ export const add = (a: number, b: number) => {
 };
 
 export const minus = (a: number, b: number) => {
+  console.log('ddddd')
   return a - b;
 };
 
