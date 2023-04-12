@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "計算ロジックの変更を行いました。",
+  "packageName": "@takas0522/utility",
+  "email": "t_o_19880522@outlook.com",
+  "dependentChangeType": "patch"
+}
