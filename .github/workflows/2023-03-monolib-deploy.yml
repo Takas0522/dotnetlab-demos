@@ -11,12 +11,20 @@ on:
       - '2023/03-monolib-deploy/**'
       - '.github/workflows/2023-03-monolib-deploy.yml'
 
+env:
+  BACKFILL_CACHE_PROVIDER: azure-blob
+  BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
+  LAGE_WRITE_REMOTE_CACHE: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      contents: read
+      contents: write
+      deployments: write
+      repository-projects: write
+      pull-requests: write
     defaults:
       run:
         working-directory: './2023/03-monolib-deploy/'
@@ -42,14 +50,15 @@ jobs:
     - run: npm run lint:lg
     - run: npm run test:lg
     - run: npm run build:lg
-      env:
-        BACKFILL_CACHE_PROVIDER: azure-blob
-        BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
-        LAGE_WRITE_REMOTE_CACHE: true
+      # env:
+      #   BACKFILL_CACHE_PROVIDER: azure-blob
+      #   BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
+      #   LAGE_WRITE_REMOTE_CACHE: true
     - name: commit and push
       run: |
         git config user.email github-actions@github.com
         git config user.name github-actions
         npm run publish:bb
       env:
-        NODE_AUTH_TOKEN: ${{secrets.PACKAGE_PAT}}
+        NPM_AUTHTOKEN: ${{secrets.PACKAGE_PAT}}
+        GITHUB_TOKENL: ${{secrets.GITHUB_TOKEN}}
