@@ -1,8 +1,13 @@
 module.exports = {
   pipeline: {
-    build: [ "^build" ],
+    build: {
+      dependsOn: ["^build"],
+      outputs: [ "dist" ]
+    },
     lint: [ "^lint" ],
-    test: [ "build","^test" ]
-  },
-  writeRemoteCache: true
+    test: {
+      dependsOn: ["build","^test"],
+      outputs: [ "dist" ]
+    }
+  }
 };
