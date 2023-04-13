@@ -2,6 +2,27 @@
   "name": "@takas0522/utility",
   "entries": [
     {
+      "date": "Thu, 13 Apr 2023 14:28:06 GMT",
+      "tag": "@takas0522/utility_v0.0.8",
+      "version": "0.0.8",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/utility",
+            "commit": "929fe8030e4f6c40c0613ab136b412921d295bf1",
+            "comment": "管理方法をちょい変更"
+          },
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/utility",
+            "commit": "929fe8030e4f6c40c0613ab136b412921d295bf1",
+            "comment": "計算ロジックの変更"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 12 Apr 2023 12:18:26 GMT",
       "tag": "@takas0522/utility_v0.0.7",
       "version": "0.0.7",
