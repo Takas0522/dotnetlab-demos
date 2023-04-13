@@ -2,6 +2,21 @@
   "name": "@takas0522/utility",
   "entries": [
     {
+      "date": "Thu, 13 Apr 2023 15:14:50 GMT",
+      "tag": "@takas0522/utility_v0.0.9",
+      "version": "0.0.9",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/utility",
+            "commit": "891fbb57497e049c1e70c36ef56be2b9bbeada3c",
+            "comment": "ちょっと変更"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 13 Apr 2023 14:28:06 GMT",
       "tag": "@takas0522/utility_v0.0.8",
       "version": "0.0.8",
