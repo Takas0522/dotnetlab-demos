@@ -4,16 +4,16 @@
   "compilerOptions": {
     "paths": {
       "@takas0522/base": [
-        "dist/takas0522/base"
+        "node_modules/takas0522/base"
       ],
       "@takas0522/control-one": [
-        "dist/takas0522/control-one"
+        "node_modules/takas0522/control-one"
       ],
       "@takas0522/control-two": [
-        "dist/takas0522/control-two"
+        "node_modules/takas0522/control-two"
       ],
       "@takas0522/utility": [
-        "dist/takas0522/utility"
+        "node_modules/takas0522/utility"
       ]
     },
     "baseUrl": "./",
