@@ -36,8 +36,7 @@
     "lib": [
       "ES2022",
       "dom"
-    ],
-    "rootDir": "."
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
