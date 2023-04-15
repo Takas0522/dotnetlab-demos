@@ -2,6 +2,21 @@
   "name": "@takas0522/control-two",
   "entries": [
     {
+      "date": "Sat, 15 Apr 2023 08:45:47 GMT",
+      "tag": "@takas0522/control-two_v0.0.8",
+      "version": "0.0.8",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/control-two",
+            "commit": "3cfa68d5047244cc530bf66fc4e822bb3d8695bf",
+            "comment": "日本語で変更してみるよ"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 13 Apr 2023 14:28:06 GMT",
       "tag": "@takas0522/control-two_v0.0.7",
       "version": "0.0.7",
