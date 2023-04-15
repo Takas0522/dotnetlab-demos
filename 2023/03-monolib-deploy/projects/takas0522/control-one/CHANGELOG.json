@@ -2,6 +2,21 @@
   "name": "@takas0522/control-one",
   "entries": [
     {
+      "date": "Sat, 15 Apr 2023 08:29:16 GMT",
+      "tag": "@takas0522/control-one_v0.0.13",
+      "version": "0.0.13",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/control-one",
+            "commit": "57dcf502ab8bbe48d29a3272ed50f4bb6b33612a",
+            "comment": "Control One Change!"
+          }
+        ]
+      }
+    },
+    {
       "date": "Sat, 15 Apr 2023 04:21:13 GMT",
       "tag": "@takas0522/control-one_v0.0.11",
       "version": "0.0.11",
