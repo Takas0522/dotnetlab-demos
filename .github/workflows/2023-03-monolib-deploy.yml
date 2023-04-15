@@ -12,12 +12,9 @@ on:
       - '.github/workflows/2023-03-monolib-deploy.yml'
 
 env:
-  # BACKFILL_CACHE_PROVIDER: azure-blob
-  # BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
-  # LAGE_WRITE_REMOTE_CACHE: true
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  TURBO_REMOTE_ONLY: true
+  BACKFILL_CACHE_PROVIDER: azure-blob
+  BACKFILL_CACHE_PROVIDER_OPTIONS: ${{ secrets.BACKFILL_CACHE_PROVIDER_OPTIONS }}
+  LAGE_WRITE_REMOTE_CACHE: true
 
 jobs:
   build:
@@ -50,12 +47,9 @@ jobs:
       with:
         path: './2023/03-monolib-deploy/node_modules'
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-    # - run: npm run lint:lg
-    # - run: npm run test:lg
-    # - run: npm run build:lg
-    - run: npm run lint:t
-    - run: npm run test:t
-    - run: npm run build:t
+    - run: npm run lint:lg
+    - run: npm run test:lg
+    - run: npm run build:lg
     - name: commit and push
       run: |
         git config user.email github-actions@github.com
@@ -63,4 +57,3 @@ jobs:
         npm run publish:bb
       env:
         NPM_AUTHTOKEN: ${{secrets.PACKAGE_PAT}}
-        GITHUB_TOKENL: ${{secrets.GITHUB_TOKEN}}
