@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { forbiddenNameValidator } from '@takas0522/utility';
+import { forbiddenNameValidator } from 'projects/takas0522/utility/src/public-api';
 
 @Component({
   selector: 'lib-custom-one',
@@ -10,7 +10,7 @@ import { forbiddenNameValidator } from '@takas0522/utility';
 export class CustomOneComponent {
 
   @Input()
-  name = '';
+  name = 'aaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
   protected control = new FormControl('', { validators: forbiddenNameValidator(new RegExp(this.name)) })
 }
