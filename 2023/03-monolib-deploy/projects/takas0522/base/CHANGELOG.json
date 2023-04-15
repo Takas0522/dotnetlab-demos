@@ -2,6 +2,21 @@
   "name": "@takas0522/base",
   "entries": [
     {
+      "date": "Sat, 15 Apr 2023 09:04:01 GMT",
+      "tag": "@takas0522/base_v0.0.15",
+      "version": "0.0.15",
+      "comments": {
+        "patch": [
+          {
+            "author": "t_o_19880522@outlook.com",
+            "package": "@takas0522/base",
+            "commit": "36d380bdbdcffe2eb99f21104c0faaff1123b23f",
+            "comment": "変更！"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 13 Apr 2023 14:28:06 GMT",
       "tag": "@takas0522/base_v0.0.8",
       "version": "0.0.8",
