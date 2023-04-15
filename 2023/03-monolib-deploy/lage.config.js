@@ -2,12 +2,11 @@ module.exports = {
   pipeline: {
     build: {
       dependsOn: ["^build"],
-      outputs: [ "dist" ]
+      outputs: [ "dist/**" ]
     },
     lint: [ "^lint" ],
     test: {
-      dependsOn: ["build","^test"],
-      outputs: [ "dist" ]
+      dependsOn: ["build","^test"]
     }
   }
 };

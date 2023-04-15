@@ -10,7 +10,7 @@ import { forbiddenNameValidator } from '@takas0522/utility';
 export class CustomOneComponent {
 
   @Input()
-  name = 'Control One Change!!!!!';
+  name = '';
 
   protected control = new FormControl('', { validators: forbiddenNameValidator(new RegExp(this.name)) })
 }
