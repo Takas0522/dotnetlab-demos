@@ -1,0 +1,16 @@
+.contents {
+  margin: 5px;
+  height: calc(100vh - 10px);
+}
+.input {
+  mat-form-field {
+    width: 100%;
+  }
+}
+.button {
+  text-align: right;
+}
+.input-field {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+}
