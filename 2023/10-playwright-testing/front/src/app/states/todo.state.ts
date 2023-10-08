@@ -21,24 +21,16 @@ export class TodoState {
     this._todo.update(_ => todos);
   }
 
-  addTodo(description: string) {
+  addTodo(item: ToDo) {
     this._todo.update((todos) => {
-      const newTodo: ToDo = {
-        id: todos.length + 1,
-        description: description,
-        status: 'incompleted',
-        addDate: new Date(),
-        updateDate: new Date()
-      };
       return [
-        newTodo,
+        item,
         ...todos
       ]
     });
   }
 
   changeState(id: ToDo['id'], status: ToDo['status']) {
-    console.log({id, status})
     this._todo.mutate(todos => {
       const todo = todos.find(f => f.id === id);
       if (todo) {

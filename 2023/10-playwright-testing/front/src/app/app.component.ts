@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { TodoService } from './services/toso.service';
 
@@ -13,6 +13,10 @@ export class AppComponent implements OnInit {
   showChangeCtrl = new FormControl(false, { nonNullable: true });
 
   private service = inject(TodoService);
+
+  get canNotEdit(): Signal<boolean> {
+    return this.service.canNotEdit$;
+  }
 
   ngOnInit(): void {
     this.showChangeCtrl.valueChanges.subscribe(isShowAll => {
