@@ -12,7 +12,7 @@ export class BaseControlComponent {
   protected ctrlA = new FormControl('');
   protected ctrlB = new FormControl('');
 
-  protected output = '';
+  protected output = 'aaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
   clickAdd() {
     const aval = Number(this.ctrlA.value == null ? '0' : this.ctrlA.value);

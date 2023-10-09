@@ -1,8 +1,24 @@
 # Change Log - @takas0522/utility
 
-This log was last generated on Sat, 15 Apr 2023 02:34:59 GMT and should not be manually modified.
+This log was last generated on Sat, 15 Apr 2023 09:50:01 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.12
+
+Sat, 15 Apr 2023 09:50:01 GMT
+
+### Patches
+
+- 日本語で変更内容を記載します (t_o_19880522@outlook.com)
+
+## 0.0.11
+
+Sat, 15 Apr 2023 08:14:45 GMT
+
+### Patches
+
+- Utility Change!! (t_o_19880522@outlook.com)
 
 ## 0.0.10
 

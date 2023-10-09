@@ -1,8 +1,16 @@
 # Change Log - @takas0522/base
 
-This log was last generated on Thu, 13 Apr 2023 14:28:06 GMT and should not be manually modified.
+This log was last generated on Sat, 15 Apr 2023 09:04:01 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.0.15
+
+Sat, 15 Apr 2023 09:04:01 GMT
+
+### Patches
+
+- 変更！ (t_o_19880522@outlook.com)
 
 ## 0.0.8
 

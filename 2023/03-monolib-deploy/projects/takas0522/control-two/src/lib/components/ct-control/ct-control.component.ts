@@ -8,5 +8,5 @@ import { FormControl } from '@angular/forms';
 })
 export class CtControlComponent {
 
-  protected ctrl = new FormControl('')
+  protected ctrl = new FormControl('aaaaaaaaaaaaaaaaaaaaaaaa!!')
 }
