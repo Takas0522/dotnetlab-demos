@@ -60,6 +60,7 @@
     <Folder Include="Tables" />
     <Folder Include="Programmability" />
     <Folder Include="Programmability\Stored Procedures" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\ToDo.sql" />
@@ -69,5 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="PlaywrightTesting.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\DataReset.sql" />
   </ItemGroup>
 </Project>

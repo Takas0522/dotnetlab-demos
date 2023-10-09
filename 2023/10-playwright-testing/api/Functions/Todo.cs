@@ -23,7 +23,7 @@ namespace PlaywrightTesting.Api.Functions
 
         public Todo()
         {
-            _connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:DefaultConnection");
+            _connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
         }
 
         [FunctionName("TodoGet")]
