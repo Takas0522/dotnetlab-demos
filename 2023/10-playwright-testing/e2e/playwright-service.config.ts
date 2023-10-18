@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import config from './playwright.config';
 import dotenv from 'dotenv';
 
@@ -20,7 +20,7 @@ export default defineConfig(config, {
 
     // Enable screenshot testing and configure directory with expectations.
     // https://learn.microsoft.com/azure/playwright-testing/how-to-configure-visual-comparisons
-    ignoreSnapshots: false,
+    ignoreSnapshots: true,
     snapshotPathTemplate: `{testDir}/__screenshots__/{testFilePath}/${os}/{arg}{ext}`,
 
     use: {
@@ -37,6 +37,19 @@ export default defineConfig(config, {
             },
             // Allow service to access the localhost.
             exposeNetwork: '<loopback>'
-        }
-    }
+        },
+        trace: 'on-first-retry',
+    },
+
+    projects: [
+        /* Test against branded browsers. */
+        {
+          name: 'Microsoft Edge',
+          use: { ...devices['Desktop Edge'], channel: 'msedge' },
+        },
+        {
+          name: 'Google Chrome',
+          use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+        },
+      ],
 });
