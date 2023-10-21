@@ -1,0 +1,22 @@
+<div class="contents">
+  <div class="input-field">
+    <div class="input">
+    <mat-form-field>
+      <mat-label>とぅーどぅー</mat-label>
+      <input matInput placeholder="とぅーどぅー" [formControl]="todoCtrl"/>
+      <mat-error>
+        ToDoを入力してください
+      </mat-error>
+    </mat-form-field>
+    </div>
+    <div class="button">
+      <button mat-flat-button color="primary" (click)="add()" [disabled]="canNotEdit()">追加</button>
+    </div>
+  </div>
+  <div>
+    <mat-checkbox [formControl]="showChangeCtrl">すべてのToDoを表示</mat-checkbox>
+  </div>
+  <div class="todolist">
+    <app-to-do-list />
+  </div>
+</div>

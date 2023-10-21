@@ -1,0 +1,19 @@
+<div class="contents">
+  <ng-container *ngFor="let todo of todos()">
+    <mat-card>
+      <div class="card-contents">
+        <div class="checkbox">
+          <ng-container *ngIf="todo.status === 'completed'">
+            <button mat-icon-button (click)="statusChange(todo.id, 'incompleted')"><mat-icon>check_box</mat-icon></button>
+          </ng-container>
+          <ng-container *ngIf="todo.status !== 'completed'">
+            <button mat-icon-button (click)="statusChange(todo.id, 'completed')"><mat-icon>check_box_outline_blank</mat-icon></button>
+          </ng-container>
+        </div>
+        <div class="description">
+          {{ todo.description }}
+        </div>
+      </div>
+    </mat-card>
+  </ng-container>
+</div>

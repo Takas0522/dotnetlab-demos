@@ -1,0 +1,17 @@
+.contents {
+  height: calc(100vh - 125px);
+  overflow-y: auto;
+}
+.card-contents {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+}
+.checkbox {
+  text-align: center;
+}
+.description {
+  margin: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 42px;
+}
