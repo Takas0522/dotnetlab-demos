@@ -54,4 +54,5 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-            az storage blob upload-batch -s ./e2e/playwright-report/ --account-name stdotnetlab202310 --auth-mode key -d '$web' --overwrite true
+          ls
+          az storage blob upload-batch -s ./e2e/playwright-report/ --account-name stdotnetlab202310 --auth-mode key -d '$web' --overwrite true
