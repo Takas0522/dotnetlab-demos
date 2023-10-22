@@ -20,7 +20,7 @@ export default defineConfig(config, {
 
     // Enable screenshot testing and configure directory with expectations.
     // https://learn.microsoft.com/azure/playwright-testing/how-to-configure-visual-comparisons
-    ignoreSnapshots: true,
+    ignoreSnapshots: false,
     snapshotPathTemplate: `{testDir}/__screenshots__/{testFilePath}/${os}/{arg}{ext}`,
 
     use: {
@@ -38,7 +38,9 @@ export default defineConfig(config, {
             // Allow service to access the localhost.
             exposeNetwork: '<loopback>'
         },
-        trace: 'on-first-retry',
+        trace: 'on',
+        video: 'on',
+        screenshot: 'on',
     },
 
     projects: [
