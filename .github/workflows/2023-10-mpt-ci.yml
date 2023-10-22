@@ -12,6 +12,7 @@ on:
       - '.github/workflows/2023-10-mpt-ci.yml'
 permissions:
   id-token: write
+  contents: read
 
 jobs:
   build:
@@ -53,4 +54,4 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-            az storage blob upload -f /2023/10-playwright-testing/e2e/playwright-report/index.html --account-name stdotnetlab202310 --auth-mode key -d '$web' -s .
+            az storage blob upload -f ./e2e/playwright-report/index.html --account-name stdotnetlab202310 --auth-mode key -d '$web' -s .
