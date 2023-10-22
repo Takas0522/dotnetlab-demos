@@ -41,7 +41,7 @@ jobs:
         connection-string: ${{ secrets.DATABASE_CONNECTION_STRING }}
         path: './2023/10-playwright-testing/database/PlaywrightTesting.Database/Scripts/*.sql'
 
-    - run: cd e2e && npm ci && npm run test:mpt
+    - run: cd /2023/10-playwright-testing/e2e && npm ci && npm run test:mpt
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
