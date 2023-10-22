@@ -5,7 +5,7 @@ name: 2023-10-mpt-ci
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
     branches: [ "main" ]
     paths:
       - '2023/10-playwright-testing/**'
@@ -40,3 +40,11 @@ jobs:
       with:
         connection-string: ${{ secrets.DATABASE_CONNECTION_STRING }}
         path: './2023/10-playwright-testing/database/PlaywrightTesting.Database/Scripts/*.sql'
+
+    - run: cd e2e && npm ci && npm run test:mpt
+
+    - name: Upload to blob storage
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+            az storage blob upload -f /2023/10-playwright-testing/e2e/playwright-report/index.html --account-name stdotnetlab202310 --auth-mode key -d '$web' -s .
