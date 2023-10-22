@@ -55,4 +55,4 @@ jobs:
       with:
         inlineScript: |
           ls
-          az storage blob upload-batch -s ./e2e/playwright-report/ --account-name stdotnetlab202310 --auth-mode key -d '$web' --overwrite true
+          az storage blob upload-batch -s ./2023/10-playwright-testing/e2e/playwright-report/ --account-name stdotnetlab202310 --auth-mode key -d '$web' --overwrite true
