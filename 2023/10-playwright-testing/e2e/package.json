@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "demo1_notusempt": "playwright test --config=demo1-not-use-mpt.config.ts --ui",
+    "demo1_usempt": "playwright test --config=demo1-use-mpt.config.ts --ui",
+    "demo2": "playwright test --config=demo2-local-use-mpt.config.ts",
     "test:ui": "playwright test --ui",
-    "test:mpt": "playwright test --config=playwright-service.config.ts --workers=20",
-    "test:local": "playwright test --config=playwright-local-test.config.ts"
+    "test:mpt": "playwright test --config=demo3-gha.ts --workers=20"
   },
   "keywords": [],
   "author": "",

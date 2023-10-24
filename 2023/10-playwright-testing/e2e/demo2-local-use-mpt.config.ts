@@ -12,15 +12,7 @@ const os = process.env.PLAYWRIGHT_SERVICE_OS || 'linux';
 
 export default defineConfig(config, {
     testDir: 'local-test',
-    // Define more generous timeout for the service operation if necessary.
-    // timeout: 60000,
-    // expect: {
-    //   timeout: 10000,
-    // },
     workers: 1,
-
-    // Enable screenshot testing and configure directory with expectations.
-    // https://learn.microsoft.com/azure/playwright-testing/how-to-configure-visual-comparisons
     ignoreSnapshots: true,
     snapshotPathTemplate: `{testDir}/__screenshots__/{testFilePath}/${os}/{arg}{ext}`,
 

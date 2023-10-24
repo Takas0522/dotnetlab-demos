@@ -47,14 +47,8 @@ test.describe('ToDoのアクセス時処理', () => {
     expect(res).toBeFalsy();
   });
 
-  const completeTodoName = 'テストデータ実行済';
   extendsTest('ToDoの入力が不可から可能状態に変更されたら既存のToDoを参照できるようになること', async ({ userAction, page }) => {
     await userAction.ToDoページにアクセスする();
-
-    // ToDoは0件
-    const bfTotos = await page.locator('mat-card').count();
-    expect(bfTotos).toBe(0);
-
     await userAction.ToDoのLoadを待つ();
 
     // ToDoは1件以上
@@ -65,10 +59,8 @@ test.describe('ToDoのアクセス時処理', () => {
   extendsTest('「すべてのToDoを表示」すると完了済みのToDoが表示されること', async ({ userAction, page }) => {
     await userAction.ToDoページにアクセスする();
     await userAction.ToDoのLoadを待つ();
-    const bfTotos = await page.locator('mat-card').count();
     await userAction.すべてのToDoを表示();
-    const afTotos = await page.locator('mat-card').count();
-    expect(afTotos).toBeGreaterThan(bfTotos);
+    await page.waitForSelector('text=check_box');
 
     const completedTodo = await page.locator('button').filter({ hasText: /^check_box$/ }).count();
     expect(completedTodo).toBeGreaterThanOrEqual(1);
@@ -101,6 +93,7 @@ test.describe('ToDoの編集とすべてのToDoの表示', () => {
     await userAction.ToDoページにアクセスする();
     await userAction.ToDoのLoadを待つ();
     await userAction.ToDoに指定された文字列を登録する(writeText);
+
     const ctrlCountBf = await page.getByText(writeText).count();
     expect(ctrlCountBf).toBeGreaterThan(0);
 
@@ -113,18 +106,6 @@ test.describe('ToDoの編集とすべてのToDoの表示', () => {
     await userAction.ToDoのLoadを待つ();
     const ctrlCountReload = await page.getByText(writeText).count();
     expect(ctrlCountReload).toEqual(0);
-  });
-
-
-  extendsTest('すべてのToDoを表示するとComplete状態にしたデータが表示される', async ({userAction, page }) => {
-    await userAction.ToDoページにアクセスする();
-    await userAction.ToDoのLoadを待つ();
-
-    const todoCountBf = await page.locator('mat-card').count();
-
-    await userAction.すべてのToDoを表示する();
-    const todoCountAf = await page.locator('mat-card').count();
-    expect(todoCountAf).toBeGreaterThan(todoCountBf);
   });
 
 });

@@ -14,7 +14,6 @@ export class ToDoPageUserAction {
   }
 
   async ToDoのLoadを待つ() {
-    const reg = new RegExp('todo');
     await this.page.waitForSelector('mat-card');
   }
 
@@ -26,13 +25,13 @@ export class ToDoPageUserAction {
     await this.page.getByText('とぅーどぅー').fill(writeText);
     await this.page.getByRole('button', { name: '追加' }).click();
     await this.page.waitForSelector('mat-snack-bar-container', { state: 'hidden' });
-    await this.page.waitForTimeout(500);
+    await this.page.waitForSelector(`text=${writeText}`);
   }
 
   async 指定された文字列のToDoをCompleteにする(text: string) {
     await this.page.locator('mat-card').filter({ hasText: 'check_box_outline_blank ' + text }).getByRole('button').click();
     await this.page.waitForSelector('mat-snack-bar-container', { state: 'hidden' });
-    await this.page.waitForTimeout(500);
+    await this.page.waitForSelector(`text=${text}`, { state: 'hidden' });
   }
 
   async すべてのToDoを表示する() {
