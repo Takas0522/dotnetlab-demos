@@ -31,7 +31,9 @@ export default defineConfig(config, {
             // Allow service to access the localhost.
             exposeNetwork: '<loopback>'
         },
-        trace: 'on-first-retry',
+        trace: 'on',
+        video: 'on',
+        screenshot: 'on',
     },
 
     projects: [
