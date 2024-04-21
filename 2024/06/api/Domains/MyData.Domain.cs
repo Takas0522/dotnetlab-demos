@@ -3,6 +3,7 @@ namespace api.Domains;
 public class MyDataDomain : IMyDataDomain {
 
     private List<MyData> myListData = new List<MyData>();
+
     public MyDataDomain()
     {
         myListData.Add(new MyData { Code = 1, Name = "Name1" });
