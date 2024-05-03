@@ -1,0 +1,2 @@
+﻿https://github.com/microsoft/semantic-kernel/blob/75dccb3f83388723b433ac47cd8f81cc9caea8c6/dotnet/samples/Concepts/Search/BingAndGooglePlugins.cs#L44
+https://zenn.dev/microsoft/articles/semantic-kernel-v1-001
