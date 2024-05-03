@@ -1,4 +1,5 @@
-﻿using CompAndBingSearch.Models;
+﻿using CompAndBingSearch.Extension;
+using CompAndBingSearch.Models;
 using CompAndBingSearch.Plugins;
 using Google.Apis.CustomSearchAPI.v1.Data;
 using MessagePack;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Plugins.Web;
 using Microsoft.SemanticKernel.Plugins.Web.Bing;
@@ -22,11 +24,10 @@ namespace CompAndBingSearch
         {
             var hb = ConfigureHostBuilder();
             var host = hb.Build();
-            Console.WriteLine("Hello, World!");
 
             //var question = "C#のDelegateとはなんでしょうか？";
-            //var question = "Microsoftの株価を教えてください";
-            var question = "2024年お勧めアニメ";
+            var question = "Microsoftの株価を教えてください";
+            //var question = "2024年お勧めアニメ";
             var kernel = host.Services.GetService<Kernel>();
 
             var func = kernel.CreateFunctionFromPrompt(@"
@@ -49,15 +50,17 @@ namespace CompAndBingSearch
             ", new OpenAIPromptExecutionSettings { MaxTokens = 200, Temperature = 0 });
             var res = await kernel.InvokeAsync(func, new KernelArguments { ["question"] = question, ["externalInformation"] = string.Empty });
             var resSt = res.GetValue<string>();
-            Console.WriteLine(res.GetValue<string>());
+            var answer = "";
+            answer = res.GetValue<string>();
+
+            //Console.WriteLine(answer);
+
+            // 答えれない質問の場合はBingる
             if (resSt.Contains("SearchPlugin.GetContentsData", StringComparison.OrdinalIgnoreCase))
             {
                 var promptTemplateFactory = new KernelPromptTemplateFactory();
                 var promptTemplate = promptTemplateFactory.Create(new PromptTemplateConfig(resSt));
                 var information = await promptTemplate.RenderAsync(kernel);
-
-                Console.WriteLine("Information found:");
-                Console.WriteLine(information);
 
                 var func2 = kernel.CreateFunctionFromPrompt(@"
                 提供された情報を使って質問に回答してください。回答には参考情報へのリンクを箇条書きで含めてください。
@@ -67,14 +70,37 @@ namespace CompAndBingSearch
                 答え: 
             ", new OpenAIPromptExecutionSettings { MaxTokens = 200, Temperature = 0 });
 
-                var answer = await kernel.InvokeAsync(func2, new KernelArguments()
+                var bingAnswer = await kernel.InvokeAsync(func2, new KernelArguments()
                 {
                     ["question"] = question,
                     ["externalInformation"] = information
                 });
+                answer = bingAnswer.GetValue<string>();
 
-                Console.WriteLine(answer.GetValue<string>());
+                Console.WriteLine(answer);
             }
+
+            // 履歴の情報含めて回答を作成して返信する
+            var prompt = $@"
+                <message role=""system"">
+                    あなたはデジタルアシスタントです。
+                    以下の参考情報も踏まえてユーザーからの質問に回答してください。
+                    参考情報を利用する場合は提供元のリンクを箇条書きで掲載してください。
+                    [参考情報]
+                    {{{{ $externalInformation }}}}
+                </message>
+                {{{{ $history }}}}
+            ";
+            var history = new ChatHistory();
+            history.AddUserMessage(question);
+            var historyPrompt = history.GetChatMessageTag();
+
+            var promptres = await kernel.InvokePromptAsync(prompt, arguments: new KernelArguments {
+                ["externalInformation"] = answer,
+                ["history"] = historyPrompt
+            });
+
+            Console.WriteLine(promptres);
         }
 
         private static IHostBuilder ConfigureHostBuilder()
