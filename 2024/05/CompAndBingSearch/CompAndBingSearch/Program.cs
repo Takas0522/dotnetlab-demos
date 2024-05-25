@@ -26,28 +26,32 @@ namespace CompAndBingSearch
             var host = hb.Build();
 
             //var question = "C#のDelegateとはなんでしょうか？";
-            var question = "Microsoftの株価を教えてください";
-            //var question = "2024年お勧めアニメ";
+            // var question = "Microsoftの株価を教えてください";
+            var question = "2024年お勧めアニメを教えてください。";
             var kernel = host.Services.GetService<Kernel>();
 
             var func = kernel.CreateFunctionFromPrompt(@"
                 あなたは下記のことを行い回答を行ってください。
                 1. 正確に回答できるようであれば回答してください
-                2. リアルタイムの情報が必要となる場合は回答例3の答えのようなコマンドを発行してください。
+                2. 情報が不足して回答できない場合はコマンドのみを発行してください。
+                [コマンド]
+                - SearchPlugin.GetContentsData
+                [質問例1]
+                日本で一番大きな湖はなんですか？
                 [回答例1]
-                質問: 日本で一番大きな湖はなんですか？
-                答え: 琵琶湖です。
+                琵琶湖です。
+                [質問例2]
+                日本の首都はどこでしょうか？
                 [回答例2]
-                質問: 日本の首都はどこでしょうか？
-                答え: 東京です。
+                東京です。
+                [質問例3]
+                DevTakasの最近の活動は？
                 [回答例3]
-                質問: DevTakasの最近の活動は？
-                答え: 
                 {{ '{{' }} SearchPlugin.GetContentsData 'DevTakas,活動,Twitter' {{'}}'}}
                 [実行するタスク]
                 質問: {{ $question }}
                 答え: 
-            ", new OpenAIPromptExecutionSettings { MaxTokens = 200, Temperature = 0 });
+            ");
             var res = await kernel.InvokeAsync(func, new KernelArguments { ["question"] = question, ["externalInformation"] = string.Empty });
             var resSt = res.GetValue<string>();
             var answer = "";
@@ -128,7 +132,10 @@ namespace CompAndBingSearch
                         var plugin = new WebSearchEnginePlugin(bingConnector);
                         return KernelPluginFactory.CreateFromObject(plugin, "bing");
                     });
-                    s.AddSingleton(sp => KernelPluginFactory.CreateFromType<SearchPlugin>(serviceProvider: sp));
+                    s.AddSingleton(sp =>
+                    {
+                        return KernelPluginFactory.CreateFromType<SearchPlugin>(serviceProvider: sp);
+                    });
                 });
             return hostBuilder;
         }
