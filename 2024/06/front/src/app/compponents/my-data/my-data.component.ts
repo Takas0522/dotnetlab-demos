@@ -5,6 +5,8 @@ import { MyDataService } from '../../services/my-data.service';
 import { MyDayaBase, NewMyData } from '../../models/my-data.model';
 import { FEATURE_FLAG_ENVIRONMENT } from '../../static/feature-flag';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-my-data',
@@ -12,7 +14,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FeatureFlagDirective,
-    FormsModule
+    FormsModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   templateUrl: './my-data.component.html',
   styleUrl: './my-data.component.scss'

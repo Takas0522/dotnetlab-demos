@@ -10,18 +10,25 @@ public class FeatureFlagsController : ControllerBase
 {
 
     private readonly IConfiguration _config;
+    private readonly IFeatureManager _feature;
 
-    public FeatureFlagsController(IConfiguration config)
+    public FeatureFlagsController(IConfiguration config, IFeatureManager feature)
     {
         _config = config;
+        _feature = feature;
     }
 
     [HttpGet()]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        var configValue = _config.GetSection("FeatureFlags");
         var dict = new Dictionary<string, bool>();
-        configValue.Bind(dict);
+        var featureAddColumn = await _feature.IsEnabledAsync(Settings.FeatureFlags.FeatureAddColumn);
+        var featureSearch = await _feature.IsEnabledAsync(Settings.FeatureFlags.FeatureSearch);
+        var featureMaterial = await _feature.IsEnabledAsync(Settings.FeatureFlags.FeatureMaterial);
+        dict.Add(Settings.FeatureFlags.FeatureAddColumn, featureAddColumn);
+        dict.Add(Settings.FeatureFlags.FeatureSearch, featureSearch);
+        dict.Add(Settings.FeatureFlags.FeatureMaterial, featureMaterial);
+
         return Ok(dict);
     }
 }

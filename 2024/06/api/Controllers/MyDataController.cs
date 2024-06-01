@@ -1,5 +1,6 @@
 using api.Filters;
 using api.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement;
 
@@ -9,6 +10,7 @@ namespace api.Controllers;
 /// MyDataControllerはデータの抽出を行うコントローラーです。
 /// </summary>
 [ApiController]
+[Authorize]
 public class MyDataController : ControllerBase
 {
 

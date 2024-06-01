@@ -3,8 +3,20 @@ using System.Configuration;
 
 // Featureフラグを利用する場合
 using Microsoft.FeatureManagement;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Web;
+using api.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// AuthSettings
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(opt =>
+    {
+        builder.Configuration.Bind("AzureAd", opt);
+
+    }, opt => { builder.Configuration.Bind("AzureAd", opt); });
 
 // ローカルのAppSettingsでFeatureフラグを利用する場合
 #if DEBUG
@@ -18,7 +30,12 @@ builder.Configuration.AddAzureAppConfiguration(opt => {
     ).UseFeatureFlags();
 });
 # endif
+builder.Services.AddFeatureManagement()
+    .AddFeatureFilter<RandomFilter>()
+    .WithTargeting<UserTargetingContextAccessor>();
+builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddAzureAppConfiguration();
 
 // Add services to the container.
 builder.Services.AddScoped<IMyDataDomain, MyDataDomain>();
@@ -54,7 +71,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseAzureAppConfiguration();
 
 app.Run();

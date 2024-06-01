@@ -1,6 +1,11 @@
 <div *appFeatureFlag="'FeatureSearch'">
     <input placeholder="ID" [(ngModel)]="inputId" />
 </div>
+<div *appFeatureFlag="'FeatureMaterial'">
+    <mat-form-field>
+        <input matInput placeholder="ID" [(ngModel)]="inputId" />
+    </mat-form-field>
+</div>
 <div>
     <button (click)="search()">検索</button>
 </div>
