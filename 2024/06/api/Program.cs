@@ -6,8 +6,19 @@ using Microsoft.FeatureManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Featureフラグを利用する場合
-builder.Services.AddFeatureManagement(builder.Configuration.GetSection("FeatureFlags"));
+// ローカルのAppSettingsでFeatureフラグを利用する場合
+#if DEBUG
+//builder.Services.AddFeatureManagement(builder.Configuration.GetSection("FeatureFlags"));
+// 対話型でAzure.Identityの認証通してもいいんだけど面倒なのでシークレットで…
+// 個人的には基本appsetting.jsonの情報をベースにローカルで開発。
+// AppCofigの動作確認したいときは対話型。Azureでの利用はManaged Indentityを使うのがいいかなと思ってます。
+builder.Configuration.AddAzureAppConfiguration(opt => {
+    opt.Connect(
+        builder.Configuration["ConnectionStrings:AppConfig"]
+    ).UseFeatureFlags();
+});
+# endif
+
 
 // Add services to the container.
 builder.Services.AddScoped<IMyDataDomain, MyDataDomain>();
