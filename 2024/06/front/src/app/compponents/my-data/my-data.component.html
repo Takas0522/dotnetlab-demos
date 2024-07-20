@@ -1,0 +1,22 @@
+<div *appFeatureFlag="'FeatureSearch'">
+    <input placeholder="ID" [(ngModel)]="inputId" />
+</div>
+<div *appFeatureFlag="'FeatureMaterial'">
+    <mat-form-field>
+        <input matInput placeholder="ID" [(ngModel)]="inputId" />
+    </mat-form-field>
+</div>
+<div>
+    <button (click)="search()">検索</button>
+</div>
+<!--項目ごとにFeatureFlagつけるよりFeatureの有無でComponent分けるほうが正攻法ではある-->
+<div class="data-grid" [ngClass]="{ 'data-grid-new-column': cauUseFeature('FeatureAddColumn') }">
+    <div class="id">Id</div>
+    <div class="name">Name</div>
+    <div *appFeatureFlag="'FeatureAddColumn'" class="new-data">NewData</div>
+@for (item of myData(); track item) {
+    <div class="id">{{item.code}}</div>
+    <div class="name">{{item.name}}</div>
+    <div *appFeatureFlag="'FeatureAddColumn'" class="new-data">{{item.newData}}</div>
+}
+</div>

@@ -1,0 +1,7 @@
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.data-grid-new-column {
+  grid-template-columns: 1fr 1fr 1fr;
+}
