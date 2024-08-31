@@ -1,0 +1,33 @@
+<div class="h-dvh overflow-auto">
+    <div class="m-2">
+        <div class="">
+            <app-button (click)="makeNewUser()">
+                新規作成
+            </app-button>
+        </div>
+        <table class="table-auto w-[100%]">
+            <thead class="sticky bg-teal-100 p-2">
+                <tr>
+                    <td class="px-4 py-2 w-[100px]">
+                        ユーザーID
+                    </td>
+                    <td class="px-4 py-2">ユーザー名</td>
+                    <td class="px-4 py-2 w-[50px]"></td>
+                </tr>
+            </thead>
+            @for (item of $users(); track $index) {
+                <tr class="border-b-2 border-bg-gray-400">
+                    <td class="px-4 py-2 w-[100px]">
+                        {{ item.id }}
+                    </td>
+                    <td class="px-4 py-2">
+                        {{ item.name }}
+                    </td>
+                    <td class="px-4 py-2 w-[50px]">
+                        <a routerLink="user/{{item.id}}">></a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="w-full m-2">
+    <input class="w-full p-2 rounded border-2 border-black focus:outline-none focus:border-violet-400"
+        [ngClass]="{ 'border-red-700': hasError }"
+        [formControl]="ctrl"
+        [placeholder]="placeholder"/>
+    @if (hasError) {
+        <p class="p2 text-red-700">何らかのエラーが発生しています</p>
+    }
+</div>

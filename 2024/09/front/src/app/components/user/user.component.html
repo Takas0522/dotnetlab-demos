@@ -1,0 +1,13 @@
+<div class="w-[50%] p-2">
+    <form [formGroup]="formGroup">
+        <div class="m-2">
+            <app-input formControlName="userId" placeholder="ユーザーID"/>
+        </div>
+        <div class="m-2">
+            <app-input formControlName="userName" [placeholder]="'ユーザー名'"/>
+        </div>
+        <div class="m-2">
+            <app-button (click)="submitUser()">確定</app-button>
+        </div>
+    </form>
+</div>
