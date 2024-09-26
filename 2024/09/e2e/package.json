@@ -1,0 +1,17 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@azure/microsoft-playwright-testing": "^1.0.0-beta.3",
+    "@playwright/test": "^1.47.2",
+    "@types/node": "^22.5.1",
+    "dotenv": "^16.4.5"
+  }
+}

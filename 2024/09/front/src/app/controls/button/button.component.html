@@ -1,3 +1,4 @@
-<button class="rounded-lg border-2 p-2 px-5 outline-0 bg-blue-900 text-white hover:bg-blue-500" (click)="click.emit()">
+<button class="rounded-lg border-2 p-2 px-5 outline-0 bg-blue-900 text-white hover:bg-blue-500" (click)="click.emit()"
+    [ngClass]="{'bg-rose-900': color === 'warn'}">
     <ng-content></ng-content>
 </button>
