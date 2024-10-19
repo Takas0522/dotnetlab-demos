@@ -19,8 +19,10 @@ internal class Program
         };
 
         var prompt = @"
-            イベントのサンプルデータのJSONを3個ほど構成してください。イベントはEvents配列に格納されます。
+            下記のコンテンツから予定情報を取得してください
             イベントの構成情報はタイトルのSubject、本文のBody、開始日時のStart、終了日時のEndを含む必要があります。
+            [メールの内容]
+            2024年10月26日の14:15から14:45で .NETラボの発表の予定をおさえておいてください。
             ";
 
         var result = await kernel.InvokePromptAsync(prompt, new(settings));

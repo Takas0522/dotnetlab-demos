@@ -29,6 +29,7 @@ namespace DemoLib
                 {
                     s.AddSingleton<AuthService>();
                     s.AddSingleton<EmailService>();
+                    s.AddSingleton<CalendarService>();
 
                     s.AddAzureOpenAIChatCompletion(
                         deploymentName: config["AzureOpenAIDeploymentName"],
@@ -41,6 +42,10 @@ namespace DemoLib
                     s.AddSingleton(sp =>
                     {
                         return KernelPluginFactory.CreateFromType<EmailPlugin>(serviceProvider: sp);
+                    });
+                    s.AddSingleton(sp =>
+                    {
+                        return KernelPluginFactory.CreateFromType<CalendarPlugin>(serviceProvider: sp);
                     });
                 });
             return hostBuilder;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DemoLib.Model
@@ -20,24 +21,34 @@ namespace DemoLib.Model
 
     }
 
-    //public class Event
-    //{
-    //    public string Subject { get; set; } = "";
-    //    public Body? Body { get; set; }
-    //    public DateTimeSet? Start { get; set; }
-    //    public DateTimeSet? End { get; set; }
+    public class GraphEvent
+    {
+        [JsonPropertyName("subject")]
+        public string Subject { get; set; } = "";
 
-    //}
+        [JsonPropertyName("body")]
+        public Body? Body { get; set; }
+
+        [JsonPropertyName("start")]
+        public DateTimeSet? Start { get; set; }
+
+        [JsonPropertyName("end")]
+        public DateTimeSet? End { get; set; }
+
+    }
 
     public class Body
     {
-        public string ContentType { get; set; } = "";
+        [JsonPropertyName("contentType")]
+        public string ContentType { get; set; } = "text";
+
+        [JsonPropertyName("content")]
         public string Content { get; set; } = "";
     }
 
     public class DateTimeSet
     {
         public DateTime DateTime { get; set; } = DateTime.Now;
-        public string TimeZone { get; set; } = "";
+        public string TimeZone { get; set; } = "Tokyo Standard Time";
     }
 }
