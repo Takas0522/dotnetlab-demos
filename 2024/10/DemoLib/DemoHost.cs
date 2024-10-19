@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DemoLib.Plugins;
+using DemoLib.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
@@ -25,6 +27,9 @@ namespace DemoLib
                 })
                 .ConfigureServices(s =>
                 {
+                    s.AddSingleton<AuthService>();
+                    s.AddSingleton<EmailService>();
+
                     s.AddAzureOpenAIChatCompletion(
                         deploymentName: config["AzureOpenAIDeploymentName"],
                         endpoint: config["AzureOpenAIEndpoint"],
@@ -33,6 +38,10 @@ namespace DemoLib
 
                     s.AddKernel();
                     // Plugin追加
+                    s.AddSingleton(sp =>
+                    {
+                        return KernelPluginFactory.CreateFromType<EmailPlugin>(serviceProvider: sp);
+                    });
                 });
             return hostBuilder;
         }
