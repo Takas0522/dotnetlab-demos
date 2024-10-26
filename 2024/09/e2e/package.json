@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:mpt": "playwright test -c playwright.service.config.ts"
   },
   "author": "",
   "license": "ISC",
