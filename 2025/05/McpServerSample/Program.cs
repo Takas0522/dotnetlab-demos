@@ -1,3 +1,4 @@
+using McpServerSample.Middleware;
 using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMcpServer()
     .WithToolsFromAssembly()
     .WithHttpTransport();
-
 
 builder.Services.AddAzureClients(opt => {
     var uri = builder.Configuration["AzureSearch:Uri"];
@@ -20,5 +20,7 @@ builder.Services.AddAzureClients(opt => {
 
 var app = builder.Build();
 app.MapMcp();
+
+app.UseAuthMiddleware();
 
 app.Run();
