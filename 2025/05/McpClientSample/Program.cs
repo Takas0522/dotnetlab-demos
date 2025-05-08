@@ -20,6 +20,10 @@ await using var client = await McpClientFactory.CreateAsync(clientTransport);
 var res = await client.ListToolsAsync();
 Console.WriteLine(res.Count);
 
+var response = await client.ListResourceTemplatesAsync();
+Console.WriteLine(response.Count);
+
+
 // 超雑だけどトークンをキャッシュする変数を作成
 
 public static class State
@@ -57,6 +61,7 @@ public class AuthHandler : DelegatingHandler
             var res = await req.ExecuteAsync();
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", res.AccessToken);
             State.TokenCache = res.AccessToken;
+            Console.WriteLine(res.AccessToken);
         }
         else
         {
