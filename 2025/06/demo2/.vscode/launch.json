@@ -8,7 +8,7 @@
             "type": "coreclr",
             "request": "launch",
             "name": "api debug",
-            "program": "${workspaceFolder}/api/bin/Debug/net9.0/DemoWebApi.dll",
+            "program": "${workspaceFolder}/api/bin/Debug/net8.0/DemoWebApi.dll",
             "cwd": "${workspaceFolder}/api",
             "stopAtEntry": false,
             "preLaunchTask": "Build DemoWebApi",
