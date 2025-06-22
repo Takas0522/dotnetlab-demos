@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "Build DemoWebApi",
-			"command": "dotnet build",
+			"command": "dotnet build DemoWebApi.csproj",
 			"group": "build",
 			"isBackground": false,
 			"options": {
