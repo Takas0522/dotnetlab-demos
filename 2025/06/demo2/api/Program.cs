@@ -15,8 +15,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // ToDoタスク管理用のキャッシュ
-var todoItems = new List<TodoItem>();
-var nextId = 1;
+var todoItems = new List<TodoItem>
+{
+    new TodoItem(1, "サンプルタスク1", false),
+    new TodoItem(2, "サンプルタスク2", true),
+    new TodoItem(3, "サンプルタスク3", false)
+};
+var nextId = todoItems.Max(t => t.Id) + 1;
 
 // 一覧取得
 app.MapGet("/todos", () => todoItems);
