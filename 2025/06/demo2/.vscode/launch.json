@@ -14,7 +14,18 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
-        }
-
+        },
+        {
+            "name": "ng serve",
+            "type": "msedge",
+            "request": "launch",
+            "preLaunchTask": "npm: start",
+            "url": "http://localhost:4200/",
+            "webRoot": "${workspaceFolder}/front/",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*",
+                "webpack:///./src/*": "${webRoot}/*"
+            }
+        },
     ]
 }

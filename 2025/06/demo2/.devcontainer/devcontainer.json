@@ -14,7 +14,7 @@
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001],
+	"forwardPorts": [5000, 5001,4000,4200,4433,9876],
 	// "portsAttributes": {
 	//		"5001": {
 	//			"protocol": "https"
@@ -23,7 +23,6 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "dotnet dev-certs https --trust",
-
 	// Configure tool-specific properties.
 	// "customizations": {},
 
