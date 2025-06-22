@@ -11,9 +11,10 @@
             "program": "${workspaceFolder}/api/bin/Debug/net9.0/DemoWebApi.dll",
             "cwd": "${workspaceFolder}/api",
             "stopAtEntry": false,
+            "preLaunchTask": "Build DemoWebApi",
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
+            }
         },
         {
             "name": "ng serve",
@@ -26,6 +27,12 @@
                 "webpack:///src/*": "${webRoot}/*",
                 "webpack:///./src/*": "${webRoot}/*"
             }
-        },
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack Debug",
+            "configurations": ["api debug", "ng serve"]
+        }
     ]
 }

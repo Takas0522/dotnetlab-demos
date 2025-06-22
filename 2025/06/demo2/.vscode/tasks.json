@@ -3,8 +3,8 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "Run DemoWebApi",
-			"command": "dotnet run",
+			"label": "Build DemoWebApi",
+			"command": "dotnet build",
 			"group": "build",
 			"isBackground": false,
 			"options": {
