@@ -1,0 +1,14 @@
+<div class="todo-container">
+  <h1>ToDo管理</h1>
+  <form (ngSubmit)="addTodo()" class="todo-form">
+    <input [(ngModel)]="newTitle" name="title" placeholder="新しいToDoを入力" required />
+    <button type="submit">追加</button>
+  </form>
+  <ul>
+    <li *ngFor="let todo of todos">
+      <input type="checkbox" [(ngModel)]="todo.isCompleted" (change)="toggleComplete(todo)" />
+      <span [class.completed]="todo.isCompleted">{{ todo.title }}</span>
+      <button (click)="deleteTodo(todo)">削除</button>
+    </li>
+  </ul>
+</div>

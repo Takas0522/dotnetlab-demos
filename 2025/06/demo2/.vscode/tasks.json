@@ -1,0 +1,39 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Build DemoWebApi",
+			"command": "dotnet build DemoWebApi.csproj",
+			"group": "build",
+			"isBackground": false,
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			]
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}/front"
+			},
+			"problemMatcher": {
+				"owner": "typescript",
+				"pattern": "$tsc",
+				"background": {
+				"activeOnStart": true,
+					"beginsPattern": {
+						"regexp": "(.*?)"
+					},
+					"endsPattern": {
+						"regexp": "bundle generation complete"
+					}
+				}
+			}
+		}
+	]
+}

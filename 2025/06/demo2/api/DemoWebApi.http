@@ -1,0 +1,27 @@
+@DemoWebApi_HostAddress = http://localhost:5232
+
+###
+# ToDo一覧取得
+GET {{DemoWebApi_HostAddress}}/todos
+Accept: application/json
+
+###
+# ToDo追加
+POST {{DemoWebApi_HostAddress}}/todos
+Content-Type: application/json
+
+"サンプルタスク"
+
+###
+# ToDo更新（例: id=1, タイトル変更, 完了状態変更）
+PUT {{DemoWebApi_HostAddress}}/todos/1
+Content-Type: application/json
+
+{
+  "title": "更新後のタイトル",
+  "isCompleted": true
+}
+
+###
+# ToDo削除（例: id=1）
+DELETE {{DemoWebApi_HostAddress}}/todos/1
