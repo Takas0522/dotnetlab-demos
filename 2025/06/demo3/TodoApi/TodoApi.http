@@ -1,0 +1,83 @@
+@TodoApi_HostAddress = https://localhost:7247
+
+### Get all todos for user 1
+GET {{TodoApi_HostAddress}}/api/todos/user/1
+
+### Get todos by category for user 1
+GET {{TodoApi_HostAddress}}/api/todos/user/1?categoryId=1
+
+### Get todos by status for user 1
+GET {{TodoApi_HostAddress}}/api/todos/user/1?status=1
+
+### Get specific todo
+GET {{TodoApi_HostAddress}}/api/todos/1/user/1
+
+### Create a new todo
+POST {{TodoApi_HostAddress}}/api/todos
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "categoryId": 1,
+  "title": "新しいタスク",
+  "description": "これは新しいタスクです",
+  "priority": 2,
+  "dueDate": "2025-12-31T23:59:59Z"
+}
+
+### Update a todo
+PUT {{TodoApi_HostAddress}}/api/todos/1/user/1
+Content-Type: application/json
+
+{
+  "title": "更新されたタスク",
+  "description": "説明も更新されました",
+  "priority": 3,
+  "status": 2
+}
+
+### Update todo status only
+PATCH {{TodoApi_HostAddress}}/api/todos/1/user/1/status
+Content-Type: application/json
+
+3
+
+### Delete a todo
+DELETE {{TodoApi_HostAddress}}/api/todos/1/user/1
+
+###
+
+### Get all categories for user 1
+GET {{TodoApi_HostAddress}}/api/categories/user/1
+
+### Get specific category
+GET {{TodoApi_HostAddress}}/api/categories/1/user/1
+
+### Create a new category
+POST {{TodoApi_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "name": "新しいカテゴリ",
+  "description": "これは新しいカテゴリです",
+  "color": "#FF6B6B"
+}
+
+### Update a category
+PUT {{TodoApi_HostAddress}}/api/categories/1/user/1
+Content-Type: application/json
+
+{
+  "name": "更新されたカテゴリ",
+  "description": "説明も更新されました",
+  "color": "#4ECDC4"
+}
+
+### Delete a category
+DELETE {{TodoApi_HostAddress}}/api/categories/1/user/1pi_HostAddress = http://localhost:5237
+
+GET {{TodoApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,38 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "coreclr",
+            "request": "launch",
+            "name": "api debug",
+            "program": "${workspaceFolder}/TodoApi/bin/Debug/net8.0/TodoApi.dll",
+            "cwd": "${workspaceFolder}/TodoApi",
+            "stopAtEntry": false,
+            "preLaunchTask": "Build TodoApi",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "ng serve",
+            "type": "msedge",
+            "request": "launch",
+            "preLaunchTask": "npm: start",
+            "url": "http://localhost:4200/",
+            "webRoot": "${workspaceFolder}/front/",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*",
+                "webpack:///./src/*": "${webRoot}/*"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack Debug",
+            "configurations": ["api debug", "ng serve"]
+        }
+    ]
+}

@@ -1,0 +1,231 @@
+<div class="todo-app">
+  <header class="app-header">
+    <h1>TODO アプリケーション</h1>
+    <div class="header-stats">
+      <span class="stat">完了: {{ getCompletedTodosCount() }} / {{ getTotalTodosCount() }}</span>
+    </div>
+  </header>
+
+  <div class="app-content">
+    <!-- サイドバー -->
+    <aside class="sidebar">
+      <div class="section">
+        <h3>アクション</h3>
+        <button class="btn btn-primary" (click)="openTodoForm()">
+          <span class="icon">+</span>
+          新しいTODO
+        </button>
+        <button class="btn btn-secondary" (click)="openCategoryForm()">
+          <span class="icon">📁</span>
+          新しいカテゴリ
+        </button>
+      </div>
+
+      <div class="section">
+        <h3>フィルター</h3>
+        <form [formGroup]="filterForm" class="filter-form">
+          <div class="form-group">
+            <label for="searchText">検索</label>
+            <input 
+              type="text" 
+              id="searchText" 
+              formControlName="searchText" 
+              placeholder="TODOを検索..."
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="categoryId">カテゴリ</label>
+            <select id="categoryId" formControlName="categoryId" class="form-control">
+              <option value="">すべて</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status">ステータス</label>
+            <select id="status" formControlName="status" class="form-control">
+              <option value="">すべて</option>
+              <option value="1">未開始</option>
+              <option value="2">進行中</option>
+              <option value="3">保留</option>
+              <option value="4">完了</option>
+              <option value="5">キャンセル</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="section">
+        <h3>カテゴリ管理</h3>
+        <div class="category-list">
+          <div *ngFor="let category of categories" class="category-item">
+            <div class="category-info">
+              <div class="category-color" [style.background-color]="category.color"></div>
+              <span class="category-name">{{ category.name }}</span>
+              <span class="category-count">({{ category.todoCount }})</span>
+            </div>
+            <div class="category-actions">
+              <button class="btn-icon" (click)="openCategoryForm(category)" title="編集">
+                ✏️
+              </button>
+              <button class="btn-icon" (click)="deleteCategory(category)" title="削除">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+      <div class="todo-list">
+        <div *ngIf="filteredTodos.length === 0" class="empty-state">
+          <p>TODOがありません</p>
+        </div>
+
+        <div *ngFor="let todo of filteredTodos" class="todo-item" [class.completed]="todo.status === TodoStatus.Completed">
+          <div class="todo-header">
+            <div class="todo-title-section">
+              <input 
+                type="checkbox" 
+                [checked]="todo.status === TodoStatus.Completed"
+                (change)="toggleTodoStatus(todo)"
+                class="todo-checkbox"
+                [attr.aria-label]="'TODO ' + todo.title + ' のステータスを切り替え'"
+                [title]="'TODO ' + todo.title + ' のステータスを切り替え'">
+              <h4 class="todo-title" [class.completed]="todo.status === TodoStatus.Completed">
+                {{ todo.title }}
+              </h4>
+            </div>
+            <div class="todo-actions">
+              <button class="btn-icon" (click)="openTodoForm(todo)" title="編集">
+                ✏️
+              </button>
+              <button class="btn-icon" (click)="deleteTodo(todo)" title="削除">
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <div class="todo-meta">
+            <div class="todo-category" *ngIf="todo.categoryName">
+              <span class="category-badge" [style.background-color]="todo.categoryColor">
+                {{ todo.categoryName }}
+              </span>
+            </div>
+            <div class="todo-priority">
+              <span class="priority-badge" [style.background-color]="getPriorityColor(todo.priority)">
+                {{ getPriorityText(todo.priority) }}
+              </span>
+            </div>
+            <div class="todo-status">
+              <span class="status-badge">{{ getStatusText(todo.status) }}</span>
+            </div>
+          </div>
+
+          <div class="todo-description" *ngIf="todo.description">
+            <p>{{ todo.description }}</p>
+          </div>
+
+          <div class="todo-dates">
+            <div *ngIf="todo.dueDate" class="due-date">
+              <strong>期限:</strong> {{ todo.dueDate | date:'yyyy/MM/dd' }}
+            </div>
+            <div *ngIf="todo.completedAt" class="completed-date">
+              <strong>完了日:</strong> {{ todo.completedAt | date:'yyyy/MM/dd HH:mm' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- TODOフォームモーダル -->
+  <div *ngIf="showTodoForm" class="modal-overlay" (click)="closeTodoForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ editingTodo ? 'TODO編集' : '新しいTODO' }}</h3>
+      <form [formGroup]="todoForm" (ngSubmit)="submitTodo()">
+        <div class="form-group">
+          <label for="title">タイトル *</label>
+          <input type="text" id="title" formControlName="title" required class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="description">説明</label>
+          <textarea id="description" formControlName="description" rows="3" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="categoryId">カテゴリ</label>
+          <select id="categoryId" formControlName="categoryId" class="form-control">
+            <option value="">なし</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="priority">優先度</label>
+          <select id="priority" formControlName="priority" class="form-control">
+            <option value="1">低</option>
+            <option value="2">通常</option>
+            <option value="3">高</option>
+            <option value="4">緊急</option>
+            <option value="5">最重要</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dueDate">期限</label>
+          <input type="date" id="dueDate" formControlName="dueDate" class="form-control">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeTodoForm()">
+            キャンセル
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="todoForm.invalid">
+            {{ editingTodo ? '更新' : '作成' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- カテゴリフォームモーダル -->
+  <div *ngIf="showCategoryForm" class="modal-overlay" (click)="closeCategoryForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ editingCategory ? 'カテゴリ編集' : '新しいカテゴリ' }}</h3>
+      <form [formGroup]="categoryForm" (ngSubmit)="submitCategory()">
+        <div class="form-group">
+          <label for="name">名前 *</label>
+          <input type="text" id="name" formControlName="name" required class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="description">説明</label>
+          <textarea id="description" formControlName="description" rows="2" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="color">色</label>
+          <input type="color" id="color" formControlName="color" class="form-control color-input">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeCategoryForm()">
+            キャンセル
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="categoryForm.invalid">
+            {{ editingCategory ? '更新' : '作成' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

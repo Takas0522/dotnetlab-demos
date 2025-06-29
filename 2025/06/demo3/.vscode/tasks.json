@@ -1,0 +1,76 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1. Verify database schema and data",
+            "type": "shell",
+            "command": "code",
+            "args": [
+                "--goto",
+                "${workspaceFolder}/scripts/verifyDatabase.sql"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "2. Build SQL Database project",
+            "type": "shell",
+            "command": "dotnet build",
+            "options": {
+                "cwd": "${workspaceFolder}/database"
+            }
+        },
+        {
+            "label": "3. Publish SQL Database project",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                ".devcontainer/sql/postCreateCommand.sh",
+                "database/bin/Debug"
+            ]
+        },
+        {
+            "label": "4. Trust .NET HTTPS certificate",
+            "type": "shell",
+            "command": "dotnet dev-certs https --trust"
+        },
+        {
+            "type": "shell",
+            "label": "Build TodoApi",
+            "command": "dotnet build TodoApi.csproj",
+            "group": "build",
+            "isBackground": false,
+            "options": {
+                "cwd": "${workspaceFolder}/TodoApi"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "isBackground": true,
+            "options": {
+            "cwd": "${workspaceFolder}/front"
+            },
+            "problemMatcher": {
+            "owner": "typescript",
+            "pattern": "$tsc",
+            "background": {
+                "activeOnStart": true,
+                "beginsPattern": {
+                "regexp": "(.*?)"
+                },
+                "endsPattern": {
+                "regexp": "bundle generation complete"
+                }
+            }
+            }
+        }
+    ]
+}
