@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build">
+  <Sdk Name="Microsoft.Build.Sql" Version="1.0.0" />
+  <PropertyGroup>
+    <Name>ToDo</Name>
+    <ProjectGuid>{6208C524-2B1F-434A-83EB-F88870541DB6}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <ModelCollation>1033, CI</ModelCollation>
+    <EnableDefaultSqlItems>false</EnableDefaultSqlItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Tables -->
+    <Build Include="Tables\Users.sql" />
+    <Build Include="Tables\TodoItems.sql" />
+    <Build Include="Tables\Tags.sql" />
+    <Build Include="Tables\TodoItemTags.sql" />
+    <Build Include="Tables\TodoItemShares.sql" />
+    
+    <!-- Views -->
+    <Build Include="Views\vw_UserTodoItems.sql" />
+    <Build Include="Views\vw_TodoItemsWithTags.sql" />
+    
+    <!-- Scripts -->
+    <PostDeploy Include="Scripts\SeedData.sql" />
+    
+    <!-- Configuration -->
+    <None Include=".vscode\tasks.json" />
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <Delete Files="$(BaseIntermediateOutputPath)\project.assets.json" />
+  </Target>
+</Project>
