@@ -94,12 +94,20 @@ export class TodoListComponent {
 
   async loadTags() {
     try {
+      console.log('Loading tags...');
       this.tagService.getTags().subscribe({
-        next: (tags) => this.tags.set(tags),
-        error: (error) => console.error('Error loading tags:', error)
+        next: (tags) => {
+          console.log('Tags loaded successfully:', tags);
+          this.tags.set(tags);
+        },
+        error: (error) => {
+          console.error('Error loading tags:', error);
+          console.error('Error status:', error.status);
+          console.error('Error message:', error.message);
+        }
       });
     } catch (error) {
-      console.error('Error loading tags:', error);
+      console.error('Error in loadTags:', error);
     }
   }
 

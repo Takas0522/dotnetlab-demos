@@ -1,0 +1,67 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>ダッシュボード</h1>
+      <div class="user-info">
+        <span class="user-name">{{ displayName() }}</span>
+        <button 
+          class="logout-btn"
+          (click)="logout()"
+          [disabled]="isLoggingOut()">
+          @if (isLoggingOut()) {
+            ログアウト中...
+          } @else {
+            ログアウト
+          }
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="welcome-section">
+      <h2>ようこそ、{{ displayName() }}さん</h2>
+      <p>Microsoft Entra ID認証が正常に完了しました。</p>
+    </div>
+
+    @if (account(); as userAccount) {
+      <div class="account-info">
+        <h3>アカウント情報</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>表示名:</label>
+            <span>{{ userAccount.name || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>ユーザー名:</label>
+            <span>{{ userAccount.username || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>テナントID:</label>
+            <span>{{ userAccount.tenantId || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>環境:</label>
+            <span>{{ userAccount.environment || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="actions-section">
+      <h3>利用可能な機能</h3>
+      <div class="action-cards">
+        <div class="action-card">
+          <h4>ToDo管理</h4>
+          <p>タスクの作成、編集、削除が可能です</p>
+          <button class="action-btn" (click)="navigateToTodos()">ToDo一覧へ</button>
+        </div>
+        <div class="action-card">
+          <h4>プロフィール</h4>
+          <p>ユーザープロフィールを確認・編集できます</p>
+          <button class="action-btn" (click)="navigateToProfile()">プロフィールへ</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

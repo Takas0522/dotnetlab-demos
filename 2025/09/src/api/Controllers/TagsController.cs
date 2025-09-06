@@ -12,11 +12,13 @@ public class TagsController : ControllerBase
 {
     private readonly ITagService _tagService;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILogger<TagsController> _logger;
 
-    public TagsController(ITagService tagService, ICurrentUserService currentUserService)
+    public TagsController(ITagService tagService, ICurrentUserService currentUserService, ILogger<TagsController> logger)
     {
         _tagService = tagService;
         _currentUserService = currentUserService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -25,14 +27,29 @@ public class TagsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<TagDto>>> GetTags()
     {
-        var userId = _currentUserService.GetUserId();
-        if (!userId.HasValue)
+        try
         {
-            return Unauthorized();
-        }
+            _logger.LogInformation("GetTags endpoint called");
+            
+            var userId = _currentUserService.GetUserId();
+            _logger.LogInformation("Retrieved userId: {UserId}", userId);
+            
+            if (!userId.HasValue)
+            {
+                _logger.LogWarning("UserId is null, returning Unauthorized");
+                return Unauthorized();
+            }
 
-        var tags = await _tagService.GetUserTagsAsync(userId.Value);
-        return Ok(tags);
+            var tags = await _tagService.GetUserTagsAsync(userId.Value);
+            _logger.LogInformation("Retrieved {TagCount} tags for user {UserId}", tags.Count, userId.Value);
+            
+            return Ok(tags);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred in GetTags endpoint");
+            return StatusCode(500, new { error = "Internal server error", message = ex.Message });
+        }
     }
 
     /// <summary>

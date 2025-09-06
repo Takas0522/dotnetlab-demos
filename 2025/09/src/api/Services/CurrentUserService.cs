@@ -22,13 +22,35 @@ public class CurrentUserService : ICurrentUserService
 
     public Guid? GetUserId()
     {
+        // まずカスタムUserIdクレームを確認
         var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
-        return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+        if (Guid.TryParse(userIdClaim, out var userId))
+        {
+            return userId;
+        }
+
+        // Azure AD v2.0のoidクレームを確認（標準形式）
+        var oidClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("oid")?.Value;
+        if (Guid.TryParse(oidClaim, out var oid))
+        {
+            return oid;
+        }
+
+        // Azure AD v2.0のobjectidentifierクレームを確認（完全URI形式）
+        var objectIdentifierClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+        if (Guid.TryParse(objectIdentifierClaim, out var objectIdentifier))
+        {
+            return objectIdentifier;
+        }
+
+        return null;
     }
 
     public string? GetUserEntraId()
     {
-        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+        return _httpContextAccessor.HttpContext?.User?.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value ??
+               _httpContextAccessor.HttpContext?.User?.FindFirst("oid")?.Value ??
+               _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
                _httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value;
     }
 

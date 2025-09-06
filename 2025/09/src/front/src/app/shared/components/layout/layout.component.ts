@@ -21,6 +21,10 @@ export class LayoutComponent {
       });
   }
 
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
   navigateToTodos() {
     this.router.navigate(['/todos']);
   }
