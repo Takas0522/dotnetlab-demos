@@ -19,7 +19,7 @@ export class TodoListComponent {
 
   protected readonly todos = signal<Todo[]>([]);
   protected readonly tags = signal<Tag[]>([]);
-  protected readonly selectedTags = signal<number[]>([]);
+  protected readonly selectedTags = signal<string[]>([]);
   protected readonly searchQuery = signal('');
   protected readonly showCompleted = signal(true);
   protected readonly isLoading = signal(false);
@@ -57,7 +57,7 @@ export class TodoListComponent {
     if (this.selectedTags().length > 0) {
       filtered = filtered.filter(todo =>
         this.selectedTags().some(tagId => 
-          todo.tags.some(tag => tag.id === tagId)
+          todo.tags.some(tag => tag.tagId === tagId)
         )
       );
     }
@@ -128,12 +128,14 @@ export class TodoListComponent {
     }
   }
 
-  async toggleTodoCompletion(todoId: number, isCompleted: boolean) {
+  async toggleTodoCompletion(todoId: string, event: Event) {
+    const target = event.target as HTMLInputElement;
+    const isCompleted = target.checked;
     try {
       this.todoService.updateTodo(todoId, { isCompleted }).subscribe({
         next: (updatedTodo) => {
           this.todos.update(todos => 
-            todos.map(t => t.id === todoId ? updatedTodo : t)
+            todos.map(t => t.todoItemId === todoId ? updatedTodo : t)
           );
         },
         error: (error) => console.error('Error updating todo:', error)
@@ -143,13 +145,13 @@ export class TodoListComponent {
     }
   }
 
-  async deleteTodo(todoId: number) {
+  async deleteTodo(todoId: string) {
     if (!confirm('このToDoを削除しますか？')) return;
 
     try {
       this.todoService.deleteTodo(todoId).subscribe({
         next: () => {
-          this.todos.update(todos => todos.filter(t => t.id !== todoId));
+          this.todos.update(todos => todos.filter(t => t.todoItemId !== todoId));
         },
         error: (error) => console.error('Error deleting todo:', error)
       });
@@ -158,11 +160,11 @@ export class TodoListComponent {
     }
   }
 
-  navigateToDetail(todoId: number) {
+  navigateToDetail(todoId: string) {
     this.router.navigate(['/todos', todoId]);
   }
 
-  toggleTagFilter(tagId: number) {
+  toggleTagFilter(tagId: string) {
     this.selectedTags.update(tags => 
       tags.includes(tagId) 
         ? tags.filter(id => id !== tagId)
@@ -176,27 +178,30 @@ export class TodoListComponent {
   }
 
   // テンプレート用のヘルパーメソッド
-  updateNewTodoTitle(value: string) {
-    this.newTodo.update(todo => ({ ...todo, title: value }));
+  updateNewTodoTitle(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.newTodo.update(todo => ({ ...todo, title: target.value }));
   }
 
-  updateNewTodoDescription(value: string) {
-    this.newTodo.update(todo => ({ ...todo, description: value }));
+  updateNewTodoDescription(event: Event) {
+    const target = event.target as HTMLTextAreaElement;
+    this.newTodo.update(todo => ({ ...todo, description: target.value }));
   }
 
   setFilter(filter: 'all' | 'pending' | 'completed') {
     this.currentFilter.set(filter);
   }
 
-  setSearchQuery(query: string) {
-    this.searchQuery.set(query);
+  setSearchQuery(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.searchQuery.set(target.value);
   }
 
   selectedTagId() {
     return this.selectedTags().length === 1 ? this.selectedTags()[0] : null;
   }
 
-  setTagFilter(tagId: number) {
+  setTagFilter(tagId: string) {
     this.selectedTags.set([tagId]);
   }
 
@@ -210,7 +215,7 @@ export class TodoListComponent {
     this.currentFilter.set('all');
   }
 
-  viewTodoDetail(todoId: number) {
+  viewTodoDetail(todoId: string) {
     this.router.navigate(['/todos', todoId]);
   }
 }

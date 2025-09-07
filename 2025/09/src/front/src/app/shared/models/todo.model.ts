@@ -1,24 +1,33 @@
 export interface Todo {
-  id: number;
+  todoItemId: string;  // WebAPIの TodoItemId に合わせる
   title: string;
   description?: string;
   isCompleted: boolean;
+  priority: number;
+  dueDate?: string;
+  completedAt?: string;
   createdAt: string;
   updatedAt: string;
   userId: string;
+  userDisplayName: string;
   tags: Tag[];
-  sharedWith: SharedTodo[];
+  accessType: string;
+  permission: string;
 }
 
 export interface Tag {
-  id: number;
-  name: string;
-  color?: string;
+  tagId: string;
+  userId: string;
+  tagName: string;  // WebAPIの TagName に合わせる
+  colorCode?: string;  // WebAPIの ColorCode に合わせる
+  createdAt: string;
+  updatedAt: string;
+  usageCount: number;
 }
 
 export interface SharedTodo {
-  id: number;
-  todoId: number;
+  id: string;
+  todoId: string;
   sharedWithUserId: string;
   sharedByUserId: string;
   sharedAt: string;
@@ -28,14 +37,18 @@ export interface SharedTodo {
 export interface CreateTodoRequest {
   title: string;
   description?: string;
-  tagIds?: number[];
+  priority?: number;
+  dueDate?: string;
+  tagIds?: string[];  // WebAPIの TagIds に合わせる
 }
 
 export interface UpdateTodoRequest {
   title?: string;
   description?: string;
   isCompleted?: boolean;
-  tagIds?: number[];
+  priority?: number;
+  dueDate?: string;
+  tagIds?: string[];
 }
 
 export interface ShareTodoRequest {

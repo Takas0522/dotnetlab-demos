@@ -39,14 +39,14 @@ export class TodoDetailComponent {
   });
 
   ngOnInit() {
-    const todoId = Number(this.route.snapshot.paramMap.get('id'));
+    const todoId = this.route.snapshot.paramMap.get('id');
     if (todoId) {
       this.loadTodo(todoId);
       this.loadTags();
     }
   }
 
-  async loadTodo(id: number) {
+  async loadTodo(id: string) {
     this.isLoading.set(true);
     try {
       this.todoService.getTodo(id).subscribe({
@@ -56,7 +56,7 @@ export class TodoDetailComponent {
             title: todo.title,
             description: todo.description || '',
             isCompleted: todo.isCompleted,
-            tagIds: todo.tags.map(tag => tag.id)
+            tagIds: todo.tags.map(tag => tag.tagId)
           });
           this.isLoading.set(false);
         },
@@ -87,7 +87,7 @@ export class TodoDetailComponent {
     if (!todo) return;
 
     try {
-      this.todoService.updateTodo(todo.id, this.editForm()).subscribe({
+      this.todoService.updateTodo(todo.todoItemId, this.editForm()).subscribe({
         next: (updatedTodo) => {
           this.todo.set(updatedTodo);
           this.isEditing.set(false);
@@ -104,10 +104,10 @@ export class TodoDetailComponent {
     if (!todo || !this.shareForm().userEmail.trim()) return;
 
     try {
-      this.todoService.shareTodo(todo.id, this.shareForm()).subscribe({
+      this.todoService.shareTodo(todo.todoItemId, this.shareForm()).subscribe({
         next: (sharedTodo) => {
           // ToDoを再読み込みして共有情報を更新
-          this.loadTodo(todo.id);
+          this.loadTodo(todo.todoItemId);
           this.shareForm.set({ userEmail: '', permissions: 'READ' });
           this.showShareForm.set(false);
         },
@@ -118,14 +118,14 @@ export class TodoDetailComponent {
     }
   }
 
-  async unshareTodo(shareId: number) {
+  async unshareTodo(shareId: string) {
     const todo = this.todo();
     if (!todo) return;
 
     try {
-      this.todoService.unshareTodo(todo.id, shareId).subscribe({
+      this.todoService.unshareTodo(todo.todoItemId, shareId).subscribe({
         next: () => {
-          this.loadTodo(todo.id);
+          this.loadTodo(todo.todoItemId);
         },
         error: (error) => console.error('Error unsharing todo:', error)
       });
@@ -139,7 +139,7 @@ export class TodoDetailComponent {
     if (!todo || !confirm('このToDoを削除しますか？')) return;
 
     try {
-      this.todoService.deleteTodo(todo.id).subscribe({
+      this.todoService.deleteTodo(todo.todoItemId).subscribe({
         next: () => {
           this.router.navigate(['/todos']);
         },
@@ -150,7 +150,7 @@ export class TodoDetailComponent {
     }
   }
 
-  toggleTagSelection(tagId: number) {
+  toggleTagSelection(tagId: string) {
     this.editForm.update(form => ({
       ...form,
       tagIds: form.tagIds?.includes(tagId)
@@ -166,7 +166,7 @@ export class TodoDetailComponent {
         title: todo.title,
         description: todo.description || '',
         isCompleted: todo.isCompleted,
-        tagIds: todo.tags.map(tag => tag.id)
+        tagIds: todo.tags.map(tag => tag.tagId)
       });
     }
     this.isEditing.set(false);

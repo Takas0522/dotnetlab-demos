@@ -40,7 +40,7 @@ export class SharedTodosComponent {
     }
   }
 
-  navigateToDetail(todoId: number) {
+  navigateToDetail(todoId: string) {
     this.router.navigate(['/todos', todoId]);
   }
 

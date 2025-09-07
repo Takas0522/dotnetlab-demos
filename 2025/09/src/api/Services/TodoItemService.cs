@@ -20,10 +20,12 @@ public interface ITodoItemService
 public class TodoItemService : ITodoItemService
 {
     private readonly TodoDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public TodoItemService(TodoDbContext context)
+    public TodoItemService(TodoDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<List<TodoItemDto>> GetUserTodoItemsAsync(Guid userId, TodoItemFilterDto filter)
@@ -84,6 +86,9 @@ public class TodoItemService : ITodoItemService
 
     public async Task<TodoItemDto> CreateTodoItemAsync(Guid userId, CreateTodoItemDto createTodoItemDto)
     {
+        // ユーザーの存在確認と自動作成
+        await EnsureUserExistsAsync(userId);
+
         var todoItem = new TodoItem
         {
             UserId = userId,
@@ -105,6 +110,31 @@ public class TodoItemService : ITodoItemService
         // 作成されたアイテムを再取得
         var createdItem = await GetTodoItemByIdAsync(todoItem.TodoItemId, userId);
         return createdItem!;
+    }
+
+    private async Task EnsureUserExistsAsync(Guid userId)
+    {
+        var existingUser = await _context.Users
+            .Where(u => u.UserId == userId)
+            .FirstOrDefaultAsync();
+
+        if (existingUser == null)
+        {
+            // ユーザーが存在しない場合、認証情報から基本情報を取得して作成
+            var user = new User
+            {
+                UserId = userId,
+                EntraId = _currentUserService.GetUserEntraId() ?? userId.ToString(),
+                UserPrincipalName = _currentUserService.GetUserPrincipalName() ?? $"user-{userId}@unknown.com",
+                DisplayName = _currentUserService.GetUserDisplayName() ?? "Unknown User",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<TodoItemDto?> UpdateTodoItemAsync(Guid todoItemId, Guid userId, UpdateTodoItemDto updateTodoItemDto)

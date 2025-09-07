@@ -23,7 +23,7 @@ export class TagService {
   }
 
   // タグ削除
-  deleteTag(id: number): Observable<void> {
+  deleteTag(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/tags/${id}`);
   }
 }
