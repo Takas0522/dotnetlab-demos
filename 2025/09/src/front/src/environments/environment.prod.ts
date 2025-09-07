@@ -9,5 +9,8 @@ export const environment = {
   apiConfig: {
     uri: 'https://your-api-domain.com/api',
     scopes: ['api://YOUR_API_CLIENT_ID/access_as_user']
+  },
+  applicationInsights: {
+    connectionString: '' // Application Insightsの接続文字列をここに設定（本番環境用）
   }
 };

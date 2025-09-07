@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using api.Data;
 using api.Services;
+using api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -86,6 +90,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// カスタムミドルウェアの追加
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<PerformanceMiddleware>();
 
 app.UseCors("AllowSpecificOrigins");
 
