@@ -1,0 +1,279 @@
+<div class="container mx-auto p-6">
+  <div class="bg-white rounded-lg shadow-md">
+    <!-- ヘッダー -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">ToDo リスト</h1>
+        <div class="flex gap-2">
+          <button 
+            (click)="showCreateTagForm.set(!showCreateTagForm())"
+            class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors">
+            @if (showCreateTagForm()) {
+              タグ作成をキャンセル
+            } @else {
+              新しいタグ
+            }
+          </button>
+          <button 
+            (click)="showCreateForm.set(!showCreateForm())"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
+            @if (showCreateForm()) {
+              キャンセル
+            } @else {
+              新しいToDo
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- 新しいタグ作成フォーム -->
+      @if (showCreateTagForm()) {
+        <div class="bg-purple-50 p-4 rounded-md mb-4">
+          <h3 class="text-lg font-medium text-purple-800 mb-3">新しいタグを作成 (Application Insights 遅延テスト)</h3>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">タグ名</label>
+              <input
+                type="text"
+                [value]="newTag().name"
+                (input)="updateNewTagName($event)"
+                [disabled]="isCreatingTag()"
+                placeholder="タグ名を入力..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">カラー</label>
+              <input
+                type="color"
+                [value]="newTag().color"
+                (input)="updateNewTagColor($event)"
+                [disabled]="isCreatingTag()"
+                class="w-16 h-10 border border-gray-300 rounded-md disabled:bg-gray-100 disabled:cursor-not-allowed">
+            </div>
+            <div class="flex gap-2">
+              <button
+                (click)="createTag()"
+                [disabled]="!newTag().name.trim() || isCreatingTag()"
+                class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-md transition-colors flex items-center gap-2">
+                @if (isCreatingTag()) {
+                  <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  作成中...
+                } @else {
+                  タグを作成 (5-10秒遅延あり)
+                }
+              </button>
+              <button
+                (click)="showCreateTagForm.set(false)"
+                [disabled]="isCreatingTag()"
+                class="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-md transition-colors">
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- 新しいToDo作成フォーム -->
+      @if (showCreateForm()) {
+        <div class="bg-gray-50 p-4 rounded-md mb-4">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">タイトル</label>
+              <input
+                type="text"
+                [value]="newTodo().title"
+                (input)="updateNewTodoTitle($event)"
+                placeholder="ToDoのタイトルを入力..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">説明</label>
+              <textarea
+                [value]="newTodo().description"
+                (input)="updateNewTodoDescription($event)"
+                placeholder="説明を入力..."
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+            <div class="flex gap-2">
+              <button
+                (click)="createTodo()"
+                [disabled]="!newTodo().title.trim()"
+                class="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-md transition-colors">
+                作成
+              </button>
+              <button
+                (click)="showCreateForm.set(false)"
+                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors">
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- フィルターセクション -->
+      <div class="space-y-3">
+        <!-- 検索バー -->
+        <div>
+          <input
+            type="text"
+            [value]="searchQuery()"
+            (input)="setSearchQuery($event)"
+            placeholder="タイトルや説明で検索..."
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- ステータスフィルター -->
+        <div class="flex gap-2">
+          <button
+            (click)="setFilter('all')"
+            [class]="currentFilter() === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+            class="px-3 py-1 rounded-md text-sm font-medium transition-colors hover:bg-blue-400">
+            すべて
+          </button>
+          <button
+            (click)="setFilter('pending')"
+            [class]="currentFilter() === 'pending' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700'"
+            class="px-3 py-1 rounded-md text-sm font-medium transition-colors hover:bg-orange-400">
+            未完了
+          </button>
+          <button
+            (click)="setFilter('completed')"
+            [class]="currentFilter() === 'completed' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'"
+            class="px-3 py-1 rounded-md text-sm font-medium transition-colors hover:bg-green-400">
+            完了済み
+          </button>
+        </div>
+
+        <!-- タグフィルター -->
+        @if (tags().length > 0) {
+          <div class="flex flex-wrap gap-2">
+            <span class="text-sm font-medium text-gray-600">タグでフィルター:</span>
+            @for (tag of tags(); track tag.tagId) {
+              <button
+                (click)="toggleTagFilter(tag.tagId)"
+                [class]="selectedTags().includes(tag.tagId) ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-700'"
+                class="px-2 py-1 rounded-md text-xs font-medium transition-colors hover:bg-purple-400">
+                {{ tag.tagName }}
+              </button>
+            }
+          </div>
+        }
+
+        <!-- フィルタークリアボタン -->
+        @if (selectedTags().length > 0 || searchQuery() || currentFilter() !== 'all') {
+          <button
+            (click)="clearAllFilters()"
+            class="text-sm text-blue-600 hover:text-blue-800 underline">
+            すべてのフィルターをクリア
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ToDoリスト -->
+    <div class="p-6">
+      @if (isLoading()) {
+        <div class="flex justify-center items-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <span class="ml-2 text-gray-600">読み込み中...</span>
+        </div>
+      } @else {
+        @if (filteredTodos().length === 0) {
+          <!-- ToDoがない場合の表示 -->
+          <div class="text-center py-12">
+            @if (todos().length === 0) {
+              <!-- 全くToDoがない場合 -->
+              <div class="text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">ToDoがありません</h3>
+                <p class="text-gray-600 mb-4">最初のToDoを作成して始めましょう！</p>
+                <button
+                  (click)="showCreateForm.set(true)"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
+                  新しいToDoを作成
+                </button>
+              </div>
+            } @else {
+              <!-- フィルター結果がない場合 -->
+              <div class="text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">条件に一致するToDoがありません</h3>
+                <p class="text-gray-600 mb-4">検索条件やフィルターを変更してお試しください。</p>
+                <button
+                  (click)="clearAllFilters()"
+                  class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors">
+                  フィルターをクリア
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- ToDoリスト表示 -->
+          <div class="space-y-3">
+            @for (todo of filteredTodos(); track todo.todoItemId) {
+              <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-start gap-3">
+                  <!-- 完了チェックボックス -->
+                  <input
+                    type="checkbox"
+                    [checked]="todo.isCompleted"
+                    (change)="toggleTodoCompletion(todo.todoItemId, $event)"
+                    [attr.aria-label]="'ToDoを' + (todo.isCompleted ? '未完了' : '完了') + 'にする: ' + todo.title"
+                    [title]="'ToDoを' + (todo.isCompleted ? '未完了' : '完了') + 'にする'"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                  
+                  <!-- ToDo内容 -->
+                  <div class="flex-1 cursor-pointer" (click)="viewTodoDetail(todo.todoItemId)">
+                    <h3 [class]="todo.isCompleted ? 'line-through text-gray-500' : 'text-gray-900'"
+                        class="font-medium">
+                      {{ todo.title }}
+                    </h3>
+                    @if (todo.description) {
+                      <p [class]="todo.isCompleted ? 'line-through text-gray-400' : 'text-gray-600'"
+                         class="text-sm mt-1">
+                        {{ todo.description }}
+                      </p>
+                    }
+                    
+                    <!-- タグ表示 -->
+                    @if (todo.tags && todo.tags.length > 0) {
+                      <div class="flex flex-wrap gap-1 mt-2">
+                        @for (tag of todo.tags; track tag.tagId) {
+                          <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                            {{ tag.tagName }}
+                          </span>
+                        }
+                      </div>
+                    }
+                    
+                    <!-- 作成日時 -->
+                    <p class="text-xs text-gray-500 mt-2">
+                      作成日: {{ todo.createdAt | date:'yyyy/MM/dd HH:mm' }}
+                    </p>
+                  </div>
+                  
+                  <!-- 削除ボタン -->
+                  <button
+                    (click)="deleteTodo(todo.todoItemId)"
+                    [attr.aria-label]="'ToDoを削除: ' + todo.title"
+                    [title]="'ToDoを削除: ' + todo.title"
+                    class="text-red-600 hover:text-red-800 p-1 rounded-md hover:bg-red-50 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,294 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <!-- ローディング -->
+  @if (isLoading()) {
+    <div class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <p class="mt-2 text-gray-600">読み込み中...</p>
+    </div>
+  }
+
+  <!-- ToDo詳細 -->
+  @if (!isLoading() && todo()) {
+    <div class="space-y-6">
+      <!-- ヘッダー -->
+      <div class="flex items-center justify-between">
+        <button
+          (click)="goBack()"
+          class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          戻る
+        </button>
+
+        <div class="flex gap-2">
+          @if (!isEditing()) {
+            <button
+              (click)="isEditing.set(true)"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              編集
+            </button>
+          }
+          @if (!isEditing()) {
+            <button
+              (click)="showShareForm.set(true)"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              共有
+            </button>
+          }
+          <button
+            (click)="deleteTodo()"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            削除
+          </button>
+        </div>
+      </div>
+
+      <!-- 編集フォーム -->
+      @if (isEditing()) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <h2 class="text-xl font-semibold mb-4">ToDo編集</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">タイトル</label>
+              <input
+                type="text"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                [ngModel]="editForm().title"
+                (ngModelChange)="updateTitle($event)"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">説明</label>
+              <textarea
+                rows="4"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                [ngModel]="editForm().description"
+                (ngModelChange)="updateDescription($event)"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  [ngModel]="editForm().isCompleted"
+                  (ngModelChange)="updateCompleted($event)"
+                />
+                <span class="text-sm font-medium text-gray-700">完了済み</span>
+              </label>
+            </div>
+
+            @if (tags().length > 0) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">タグ</label>
+                <div class="flex flex-wrap gap-2">
+                  @for (tag of tags(); track tag.tagId) {
+                    <button
+                      (click)="toggleTagSelection(tag.tagId)"
+                      class="px-3 py-1 text-sm rounded-full border transition-colors"
+                      [class]="(editForm().tagIds || []).includes(tag.tagId)
+                        ? 'bg-blue-100 border-blue-300 text-blue-800'
+                        : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'"
+                    >
+                      {{ tag.tagName }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+            
+            <div class="flex gap-2">
+              <button
+                (click)="updateTodo()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                保存
+              </button>
+              <button
+                (click)="cancelEdit()"
+                class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ToDo表示 -->
+      @if (!isEditing()) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div class="flex items-start gap-4">
+            <!-- 完了チェックボックス -->
+            <div class="flex-shrink-0 w-6 h-6 rounded-full border-2 transition-colors mt-1"
+                 [class]="todo()!.isCompleted 
+                   ? 'bg-green-500 border-green-500' 
+                   : 'border-gray-300'">
+              @if (todo()!.isCompleted) {
+                <svg
+                  class="w-4 h-4 text-white mx-auto"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              }
+            </div>
+
+            <div class="flex-1">
+              <h1
+                class="text-2xl font-bold mb-4"
+                [class]="todo()!.isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'"
+              >
+                {{ todo()!.title }}
+              </h1>
+              
+              @if (todo()!.description) {
+                <p
+                  class="text-gray-700 mb-4 whitespace-pre-wrap"
+                  [class]="todo()!.isCompleted ? 'line-through' : ''"
+                >
+                  {{ todo()!.description }}
+                </p>
+              }
+
+              <!-- タグ -->
+              @if (todo()!.tags.length > 0) {
+                <div class="flex flex-wrap gap-2 mb-4">
+                  @for (tag of todo()!.tags; track tag.tagId) {
+                    <span
+                      class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-800"
+                      [style.background-color]="tag.colorCode || undefined"
+                      [style.color]="tag.colorCode ? 'white' : undefined"
+                    >
+                      {{ tag.tagName }}
+                    </span>
+                  }
+                </div>
+              }
+
+              <!-- メタ情報 -->
+              <div class="text-sm text-gray-500 space-y-1">
+                <p>作成日時: {{ todo()!.createdAt | date:'medium' }}</p>
+                <p>更新日時: {{ todo()!.updatedAt | date:'medium' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- 共有情報 - 現在のAPIスキーマでは利用不可
+      @if (todo()!.sharedWith.length > 0) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <h3 class="text-lg font-semibold mb-4">共有設定</h3>
+          
+          <div class="space-y-3">
+            @for (share of todo()!.sharedWith; track share.id) {
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p class="font-medium text-gray-900">{{ share.sharedWithUserId }}</p>
+                  <p class="text-sm text-gray-500">
+                    権限: {{ share.permissions === 'READ' ? '読み取り' : '編集' }}
+                    | 共有日時: {{ share.sharedAt | date:'short' }}
+                  </p>
+                </div>
+                <button
+                  (click)="unshareTodo(share.id)"
+                  class="text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                  title="共有解除"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      } -->
+
+      <!-- 共有フォーム -->
+      @if (showShareForm()) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <h3 class="text-lg font-semibold mb-4">ToDoを共有</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">メールアドレス</label>
+              <input
+                type="email"
+                placeholder="共有したいユーザーのメールアドレス"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                [ngModel]="shareForm().userEmail"
+                (ngModelChange)="updateShareEmail($event)"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">権限</label>
+              <select
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                [ngModel]="shareForm().permissions"
+                (ngModelChange)="updateSharePermissions($event)"
+              >
+                <option value="READ">読み取りのみ</option>
+                <option value="WRITE">編集可能</option>
+              </select>
+            </div>
+            
+            <div class="flex gap-2">
+              <button
+                (click)="shareTodo()"
+                [disabled]="!shareForm().userEmail.trim()"
+                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors"
+              >
+                共有
+              </button>
+              <button
+                (click)="showShareForm.set(false)"
+                class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ToDoが見つからない場合 -->
+  @if (!isLoading() && !todo()) {
+    <div class="text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">❓</div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">ToDoが見つかりません</h3>
+      <p class="text-gray-500 mb-4">指定されたToDoは存在しないか、アクセス権限がありません。</p>
+      <button
+        (click)="goBack()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        一覧に戻る
+      </button>
+    </div>
+  }
+</div>

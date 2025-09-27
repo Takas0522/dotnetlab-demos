@@ -1,0 +1,363 @@
+name: AI Answer on Discussion 
+
+on:
+  discussion:
+    types: [created]
+
+jobs:
+  ai-answer:
+    runs-on: ubuntu-latest
+
+    permissions:
+      discussions: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Collect Code Context
+        run: |
+          echo "Collecting code context..."
+          mkdir -p context
+          
+          # プロジェクト構造を収集
+          echo "=== PROJECT STRUCTURE ===" > context/code_context.txt
+          find src -type f \( -name "*.cs" -o -name "*.ts" -o -name "*.js" -o -name "*.sql" -o -name "*.md" \) | head -15 >> context/code_context.txt
+
+          # ドキュメントファイルを追加（上書きではなく追記）
+          echo -e "\n=== PROJECT DOCUMENTS ===" >> context/code_context.txt
+          find docs -type f -name "*.md" >> context/code_context.txt
+
+          echo -e "\n=== DOCUMENT CONTENT ===" >> context/code_context.txt
+          
+          # docsディレクトリのMarkdownファイルの全内容を読み込み
+          find docs -type f -name "*.md" | while read -r file; do
+            if [ -f "$file" ] && [ -s "$file" ]; then
+              echo -e "\n--- $file ---" >> context/code_context.txt
+              # ドキュメントは全文読み込み（制限なし）
+              cat "$file" | \
+                iconv -f utf-8 -t utf-8 -c 2>/dev/null | \
+                tr -d '\000-\010\013\014\016-\037\177-\377' >> context/code_context.txt 2>/dev/null || true
+            fi
+          done
+
+          echo -e "\n=== CODE CONTENT ===" >> context/code_context.txt
+
+          # 重要なファイルを優先して収集（JSONファイルは除外）
+          find src -type f \( -name "*.cs" -o -name "*.ts" \) | head -8 | while read -r file; do
+            if [ -f "$file" ] && [ -s "$file" ]; then
+              echo -e "\n--- $file ---" >> context/code_context.txt
+              # コードファイルは先頭部分のみ（25行制限）
+              head -n 25 "$file" | \
+                iconv -f utf-8 -t utf-8 -c 2>/dev/null | \
+                tr -d '\000-\010\013\014\016-\037\177-\377' | \
+                sed 's/`/backtick/g' | \
+                sed 's/\$/dollar/g' | \
+                sed 's/{/leftbrace/g' | \
+                sed 's/}/rightbrace/g' >> context/code_context.txt 2>/dev/null || true
+            fi
+          done
+          
+          # ファイルサイズを確認（制限を拡大してドキュメントも含める）
+          if [ -f context/code_context.txt ]; then
+            # ドキュメント込みで10KBまで許可
+            head -c 10240 context/code_context.txt > context/code_summary.txt
+            echo "Code context collected. Size: $(wc -c < context/code_summary.txt) bytes"
+            echo "Lines: $(wc -l < context/code_summary.txt)"
+          else
+            echo "No code context available" > context/code_summary.txt
+          fi
+
+      - name: Call Azure OpenAI API
+        id: ai
+        run: |
+          # 環境変数の確認
+          echo "Checking environment variables..."
+          echo "AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:0:20}..."
+          echo "AZURE_OPENAI_DEPLOYMENT: $AZURE_OPENAI_DEPLOYMENT"
+          echo "AZURE_OPENAI_API_VERSION: $AZURE_OPENAI_API_VERSION"
+          echo "DISCUSSION_TITLE: ${DISCUSSION_TITLE:0:50}..."
+          echo "DISCUSSION_BODY length: ${#DISCUSSION_BODY}"
+          
+          # コードコンテキストを安全に読み取り
+          if [ -f context/code_summary.txt ]; then
+            CODE_CONTEXT=$(cat context/code_summary.txt)
+            echo "Code context loaded. Length: ${#CODE_CONTEXT}"
+          else
+            CODE_CONTEXT="No code context available"
+            echo "No code context file found"
+          fi
+          
+          # Discussion内容を安全にエスケープ（日本語対応）
+          DISCUSSION_BODY_SAFE=$(echo "$DISCUSSION_BODY" | \
+            sed 's/\\/\\\\/g' | \
+            sed 's/"/\\"/g' | \
+            tr -d '\000-\010\013\014\016-\037\177' | \
+            tr '\n\r' '  ')
+          
+          DISCUSSION_TITLE_SAFE=$(echo "$DISCUSSION_TITLE" | \
+            sed 's/\\/\\\\/g' | \
+            sed 's/"/\\"/g' | \
+            tr -d '\000-\010\013\014\016-\037\177' | \
+            tr '\n\r' '  ')
+          
+          CODE_CONTEXT_SAFE=$(echo "$CODE_CONTEXT" | \
+            sed 's/\\/\\\\/g' | \
+            sed 's/"/\\"/g' | \
+            tr -d '\000-\010\013\014\016-\037\177' | \
+            tr '\n\r' '  ')
+
+          echo "Escaped Discussion Body length: ${#DISCUSSION_BODY_SAFE}"
+          echo "Escaped Discussion Title length: ${#DISCUSSION_TITLE_SAFE}"
+          echo "Escaped Code Context length: ${#CODE_CONTEXT_SAFE}"
+
+          # API呼び出し用のJSONペイロードを安全に構築
+          echo "Creating JSON payload..."
+          SYSTEM_MSG="あなたは提供されたソースコードを詳細に分析し具体的で実践的な解決策を提供するコード解析アシスタントです。必ず以下のルールに従って回答してください。1.提供されたコードコンテキストを最優先で参照しそのコードベースに基づいた具体的な解決策を提案する。2.一般的な回答ではなく実際のファイル名クラス名メソッド名を使用して具体的に説明する。3.コードの変更が必要な場合は変更すべき具体的なファイルと行を指定する。4.既存のアーキテクチャやパターンに合わせた解決策を提案する。5.日本語で回答する。コードコンテキストが提供されていない場合のみ一般的なアドバイスを提供してください。"
+          USER_MSG="Discussion-タイトル: $DISCUSSION_TITLE_SAFE 内容: $DISCUSSION_BODY_SAFE 提供されたコードコンテキスト: $CODE_CONTEXT_SAFE 指示:上記のコードコンテキストを詳細に分析しdiscussionの内容に対して以下の観点から具体的な回答を提供してください。1.提供されたコードの中で関連する部分の特定。2.問題の原因分析で該当するファイル名クラス名メソッド名を明記。3.具体的な修正方法でどのファイルのどの部分をどう変更するか。4.変更後のコード例を可能であれば提示。5.注意点や関連する影響範囲。必ず提供されたコードコンテキストに基づいて回答し一般論ではなくこのプロジェクト特有の具体的な解決策を提示してください。"
+          
+          # jqを使用して安全なJSON構築
+          JSON_PAYLOAD=$(jq -n \
+            --arg system_msg "$SYSTEM_MSG" \
+            --arg user_msg "$USER_MSG" \
+            '{
+              "messages": [
+                {"role": "system", "content": $system_msg},
+                {"role": "user", "content": $user_msg}
+              ],
+              "max_tokens": 1200,
+              "temperature": 0.3
+            }')
+          
+          echo "JSON payload created successfully"
+          echo "Payload length: ${#JSON_PAYLOAD}"
+          
+          # API呼び出し（レスポンス処理を改善）
+          echo "Calling Azure OpenAI API..."
+          echo "URL: https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION"
+          
+          # レスポンスとHTTPステータスコードを分離して取得
+          HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" -X POST \
+            "https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION" \
+            -H "Content-Type: application/json" \
+            -H "api-key: $AZURE_OPENAI_API_KEY" \
+            -d "$JSON_PAYLOAD")
+          
+          curl_exit_code=$?
+          echo "curl command completed with exit code: $curl_exit_code"
+          
+          if [ $curl_exit_code -ne 0 ]; then
+            echo "curl command failed with exit code: $curl_exit_code"
+            exit $curl_exit_code
+          fi
+          
+          echo "HTTP Status Code: $HTTP_CODE"
+          
+          # レスポンス内容をログ出力（デバッグ用）
+          echo "Raw response:"
+          if [ -f response.json ]; then
+            head -c 500 response.json
+          else
+            echo "No response file found"
+          fi
+          
+          # HTTPステータスコードをチェック
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "API call failed with HTTP code: $HTTP_CODE"
+            echo "Response:"
+            cat response.json 2>/dev/null || echo "No response content"
+            exit 1
+          fi
+          
+          # JSONレスポンスの妥当性をチェック
+          if ! jq empty response.json 2>/dev/null; then
+            echo "Invalid JSON response"
+            echo "Response content:"
+            cat response.json 2>/dev/null || echo "No response content"
+            exit 1
+          fi
+          
+          echo "JSON response is valid"
+          
+          # レスポンス構造をデバッグ出力
+          echo "Response structure:"
+          jq 'keys' response.json 2>/dev/null || echo "Failed to get response keys"
+          
+          if jq -e '.choices' response.json > /dev/null 2>&1; then
+            echo "Choices array found"
+            echo "Number of choices: $(jq '.choices | length' response.json 2>/dev/null)"
+          else
+            echo "No choices array found in response"
+            echo "Full response content:"
+            cat response.json
+            exit 1
+          fi
+          
+          # JSONレスポンスの処理
+          if jq -e '.choices[0].message.content' response.json > /dev/null 2>&1; then
+            AI_CONTENT=$(jq -r '.choices[0].message.content' response.json)
+            echo "AI content extracted successfully"
+            echo "AI response length: ${#AI_CONTENT}"
+            echo "First 200 characters of AI response:"
+            echo "${AI_CONTENT:0:200}..."
+            
+            # ファイルに保存
+            echo "$AI_CONTENT" > ai_response.txt
+            echo "AI response saved to file"
+            
+            # ファイルが正常に作成されたかチェック
+            if [ -f ai_response.txt ]; then
+              echo "ai_response.txt created successfully"
+              echo "File size: $(wc -c < ai_response.txt) bytes"
+              echo "File content preview (first 100 chars):"
+              head -c 100 ai_response.txt
+              echo ""
+            else
+              echo "Failed to create ai_response.txt"
+              exit 1
+            fi
+            
+            # GitHub Actionsの出力変数用に安全にエスケープ
+            AI_CONTENT_ESCAPED=$(echo "$AI_CONTENT" | \
+              sed 's/`/\\`/g' | \
+              sed 's/\\/\\\\/g' | \
+              sed 's/"/\\"/g' | \
+              tr -d '\000-\037' | \
+              tr '\n' ' ')
+            
+            echo "response<<EOF" >> $GITHUB_OUTPUT
+            echo "$AI_CONTENT_ESCAPED" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "GitHub Actions output variable set"
+          else
+            echo "Failed to extract content from API response"
+            echo "Response structure for debugging:"
+            jq '.' response.json 2>/dev/null || cat response.json
+            exit 1
+          fi
+        env:
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }} # 例: https://<your-resource-name>.openai.azure.com
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }} # Azureで作成したモデルのデプロイ名
+          AZURE_OPENAI_API_VERSION: "2025-01-01-preview"
+          DISCUSSION_TITLE: ${{ github.event.discussion.title }}
+          DISCUSSION_BODY: ${{ github.event.discussion.body }}
+
+      - name: Post AI Response as Comment
+        run: |
+          echo "=== COMMENT POSTING DEBUG ==="
+          echo "Current working directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          
+          # AI回答を安全に投稿
+          if [ -f ai_response.txt ]; then
+            echo "ai_response.txt found"
+            echo "Response file size: $(wc -c < ai_response.txt) bytes"
+            echo "Response file line count: $(wc -l < ai_response.txt) lines"
+            
+            # ファイル内容の確認
+            echo "=== FILE CONTENT DEBUG ==="
+            echo "First 300 characters of ai_response.txt:"
+            head -c 300 ai_response.txt
+            echo ""
+            echo "=== END FILE CONTENT ==="
+            
+            # AI回答をファイルから直接読み取り
+            AI_RESPONSE=$(cat ai_response.txt)
+            echo "Raw response loaded. Length: ${#AI_RESPONSE}"
+            
+            # 特殊文字の確認
+            echo "Checking for special characters:"
+            echo "Contains backticks: $(echo "$AI_RESPONSE" | grep -c '`' || echo 0)"
+            echo "Contains quotes: $(echo "$AI_RESPONSE" | grep -c '"' || echo 0)"
+            echo "Contains newlines: $(echo "$AI_RESPONSE" | grep -c $'\n' || echo 0)"
+            
+            # jqを使用して安全にJSONペイロードを作成
+            echo "Creating JSON payload with jq..."
+            JSON_PAYLOAD=$(jq -n --arg content "$AI_RESPONSE" '{body: $content}')
+            
+            if [ $? -eq 0 ]; then
+              echo "JSON payload created successfully"
+              echo "Payload length: ${#JSON_PAYLOAD}"
+              echo "Payload preview (first 200 chars):"
+              echo "${JSON_PAYLOAD:0:200}..."
+              
+              # GitHub Discussions はGraphQL APIを使用
+              echo "Posting comment via GraphQL API..."
+              echo "Repository: ${{ github.repository_owner }}/${{ github.event.repository.name }}"
+              echo "Discussion number: ${{ github.event.discussion.number }}"
+              
+              # Discussion の Node ID を取得
+              echo "Getting discussion node ID..."
+              gh api graphql -f query='
+                query($owner: String!, $repo: String!, $number: Int!) {
+                  repository(owner: $owner, name: $repo) {
+                    discussion(number: $number) {
+                      id
+                      title
+                    }
+                  }
+                }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -F number=${{ github.event.discussion.number }} > discussion_query.json 2>&1
+              
+              if [ $? -eq 0 ]; then
+                DISCUSSION_NODE_ID=$(jq -r '.data.repository.discussion.id' discussion_query.json)
+                echo "Discussion Node ID: $DISCUSSION_NODE_ID"
+                
+                if [ "$DISCUSSION_NODE_ID" != "null" ] && [ -n "$DISCUSSION_NODE_ID" ]; then
+                  # GraphQL mutation でコメントを投稿
+                  echo "Posting comment via GraphQL mutation..."
+                  gh api graphql -f query='
+                    mutation($discussionId: ID!, $body: String!) {
+                      addDiscussionComment(input: {discussionId: $discussionId, body: $body}) {
+                        comment {
+                          id
+                          url
+                        }
+                      }
+                    }' -f discussionId="$DISCUSSION_NODE_ID" -f body="$AI_RESPONSE" > graphql_result.json 2>&1
+                  
+                  if [ $? -eq 0 ] && jq -e '.data.addDiscussionComment.comment.id' graphql_result.json > /dev/null 2>&1; then
+                    COMMENT_URL=$(jq -r '.data.addDiscussionComment.comment.url' graphql_result.json)
+                    echo "Comment posted successfully!"
+                    echo "Comment URL: $COMMENT_URL"
+                  else
+                    echo "Failed to post comment via GraphQL"
+                    echo "GraphQL response:"
+                    cat graphql_result.json
+                    exit 1
+                  fi
+                else
+                  echo "Could not get discussion node ID"
+                  echo "Query response:"
+                  cat discussion_query.json
+                  exit 1
+                fi
+              else
+                echo "Failed to query discussion"
+                echo "Query response:"
+                cat discussion_query.json
+                exit 1
+              fi
+            else
+              echo "Failed to create JSON payload with jq"
+              echo "Error occurred while processing AI response"
+              exit 1
+            fi
+          else
+            echo "ai_response.txt not found"
+            echo "Files in current directory:"
+            ls -la
+            echo "Posting error message..."
+            gh api repos/${{ github.repository }}/discussions/${{ github.event.discussion.number }}/comments \
+              -f body="AI回答の生成に失敗しました。ログを確認してください。"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

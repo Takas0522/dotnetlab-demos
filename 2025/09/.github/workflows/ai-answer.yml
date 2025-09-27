@@ -1,0 +1,194 @@
+name: AI Answer on Issue 
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  ai-answer:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+          
+      - name: Collect Code Context
+        run: |
+
+          echo "Collecting code context..."
+          mkdir -p context
+          
+          # Broken pipeエラーを防ぐため、直接テキストファイルとして収集
+          echo "=== PROJECT STRUCTURE ===" > context/code_context.txt
+          find src -type f \( -name "*.cs" -o -name "*.ts" -o -name "*.js" -o -name "*.json" -o -name "*.sql" -o -name "*.md" \) | head -20 >> context/code_context.txt
+          
+          echo -e "\n=== CODE CONTENT ===" >> context/code_context.txt
+          
+          # 重要なファイルを優先して収集（Broken pipeを回避）
+          for file in $(find src -type f \( -name "*.cs" -o -name "*.ts" -o -name "*.js" \) | head -10); do
+            if [ -f "$file" ]; then
+              echo -e "\n--- $file ---" >> context/code_context.txt
+              # パイプを使わずに直接head処理
+              head -n 30 "$file" >> context/code_context.txt 2>/dev/null || true
+            fi
+          done
+          
+          # ファイルサイズを制限（4KB以内）
+          if [ -f context/code_context.txt ]; then
+            head -c 4000 context/code_context.txt > context/code_summary.txt
+            echo "Code context collected. Size: $(wc -c < context/code_summary.txt) bytes"
+          else
+            echo "No code context available" > context/code_summary.txt
+          fi
+
+      - name: Call Azure OpenAI API
+        id: ai
+        run: |
+          # 環境変数の確認
+          echo "Checking environment variables..."
+          echo "AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:0:20}..."
+          echo "AZURE_OPENAI_DEPLOYMENT: $AZURE_OPENAI_DEPLOYMENT"
+          echo "AZURE_OPENAI_API_VERSION: $AZURE_OPENAI_API_VERSION"
+          echo "ISSUE_TITLE: ${ISSUE_TITLE:0:50}..."
+          echo "ISSUE_BODY length: ${#ISSUE_BODY}"
+          
+          # コードコンテキストを安全に読み取り（Broken pipeを回避）
+          if [ -f context/code_summary.txt ]; then
+            CODE_CONTEXT=$(cat context/code_summary.txt)
+            echo "Code context loaded. Length: ${#CODE_CONTEXT}"
+          else
+            CODE_CONTEXT="No code context available"
+            echo "No code context file found"
+          fi
+          # Issue内容をエスケープして安全にする  
+          ISSUE_BODY_SAFE=$(echo "$ISSUE_BODY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          ISSUE_TITLE_SAFE=$(echo "$ISSUE_TITLE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          CODE_CONTEXT_SAFE=$(echo "$CODE_CONTEXT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          
+          echo "Escaped Issue Title: ${ISSUE_TITLE_SAFE:0:50}..."
+          echo "Escaped Issue Body length: ${#ISSUE_BODY_SAFE}"
+          echo "Escaped Code Context length: ${#CODE_CONTEXT_SAFE}"
+          
+          # API呼び出し用のJSONペイロードを安全に構築
+          echo "Creating JSON payload..."
+          SYSTEM_MSG="You are a helpful assistant that analyzes code and provides solutions. Respond in Japanese."
+          USER_MSG="Issue Title: $ISSUE_TITLE_SAFE. Issue Body: $ISSUE_BODY_SAFE. Code Context: $CODE_CONTEXT_SAFE. Based on the provided code context, please analyze the issue and provide a detailed solution or explanation."
+          
+          # jqを使用して安全なJSON構築
+          JSON_PAYLOAD=$(jq -n \
+            --arg system_msg "$SYSTEM_MSG" \
+            --arg user_msg "$USER_MSG" \
+            '{
+              "messages": [
+                {"role": "system", "content": $system_msg},
+                {"role": "user", "content": $user_msg}
+              ],
+              "max_tokens": 800,
+              "temperature": 0.3
+            }')
+          
+          echo "JSON payload created successfully"
+          echo "Payload length: ${#JSON_PAYLOAD}"
+          
+          # API呼び出し
+          echo "Calling Azure OpenAI API..."
+          echo "URL: https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION"
+          
+          RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" -X POST \
+            "https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION" \
+            -H "Content-Type: application/json" \
+            -H "api-key: $AZURE_OPENAI_API_KEY" \
+            -d "$JSON_PAYLOAD")
+          
+          curl_exit_code=$?
+          echo "curl command completed with exit code: $curl_exit_code"
+          
+          if [ $curl_exit_code -ne 0 ]; then
+            echo "curl command failed with exit code: $curl_exit_code"
+            exit $curl_exit_code
+          fi
+          
+          # HTTPステータスコードとレスポンスを分離
+          HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+          JSON_RESPONSE=$(echo "$RESPONSE" | sed 's/HTTP_CODE:[0-9]*$//')
+          
+          echo "HTTP Status Code: $HTTP_CODE"
+          echo "API Response: $JSON_RESPONSE"
+          
+          # HTTPステータスコードをチェック
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "API call failed with HTTP code: $HTTP_CODE"
+            echo "Response: $JSON_RESPONSE"
+            exit 1
+          fi
+          
+          # JSONレスポンスの処理
+          if echo "$JSON_RESPONSE" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
+            AI_CONTENT=$(echo "$JSON_RESPONSE" | jq -r '.choices[0].message.content')
+            echo "$AI_CONTENT" > ai_response.txt
+            echo "response<<EOF" >> $GITHUB_OUTPUT
+            echo "$AI_CONTENT" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to parse API response"
+            echo "Response: $JSON_RESPONSE"
+            exit 1
+          fi
+        env:
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }} # 例: https://<your-resource-name>.openai.azure.com
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }} # Azureで作成したモデルのデプロイ名
+          AZURE_OPENAI_API_VERSION: "2025-01-01-preview"
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+
+      - name: Post AI Response as Comment
+        run: |
+          # AI回答を安全に投稿
+          if [ -f ai_response.txt ]; then
+            echo "Posting AI response as comment..."
+            echo "Response file size: $(wc -c < ai_response.txt) bytes"
+            
+            # AI回答をファイルから直接読み取り、jqでJSONエスケープ
+            AI_RESPONSE=$(cat ai_response.txt)
+            echo "Raw response length: ${#AI_RESPONSE}"
+            
+            # jqを使用して安全にJSONペイロードを作成
+            JSON_PAYLOAD=$(jq -n --arg content "$AI_RESPONSE" '{body: $content}')
+            
+            echo "JSON payload created successfully"
+            echo "Payload length: ${#JSON_PAYLOAD}"
+            
+            # GitHub Issues API を使用してコメント投稿
+            echo "Posting comment via GitHub Issues API..."
+            echo "$JSON_PAYLOAD" | gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments --input - > issue_comment_result.json 2>&1
+            
+            if [ $? -eq 0 ]; then
+              echo "Comment posted successfully to issue!"
+              if [ -f issue_comment_result.json ]; then
+                COMMENT_URL=$(jq -r '.html_url' issue_comment_result.json 2>/dev/null || echo "URL not available")
+                echo "Comment URL: $COMMENT_URL"
+              fi
+            else
+              echo "Failed to post comment to issue"
+              echo "API response:"
+              cat issue_comment_result.json
+              exit 1
+            fi
+          else
+            echo "No AI response file found"
+            gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+              -f body="AI回答の生成に失敗しました。ログを確認してください。"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

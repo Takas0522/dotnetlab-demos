@@ -1,0 +1,39 @@
+<section class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>ログイン</h1>
+      <p>Microsoft アカウントでサインインしてください</p>
+    </div>
+
+    @if (error()) {
+      <div class="error-message">
+        {{ error() }}
+      </div>
+    }
+
+    <div class="login-buttons">
+      <button 
+        class="btn btn-primary"
+        (click)="loginWithPopup()"
+        [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="loading-spinner"></span>
+          ログイン中...
+        } @else {
+          ポップアップでログイン
+        }
+      </button>
+
+      <button 
+        class="btn btn-secondary"
+        (click)="loginWithRedirect()"
+        [disabled]="isLoading()">
+        リダイレクトでログイン
+      </button>
+    </div>
+
+    <div class="login-info">
+      <p>初回ログイン時は、Microsoft アカウントへのアクセス許可を求められます。</p>
+    </div>
+  </div>
+</section>

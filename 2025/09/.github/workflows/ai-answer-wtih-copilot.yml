@@ -1,0 +1,54 @@
+name: AI Answer on Issue With Copilot
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  ai-answer:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Install GitHub Copilot CLI
+        run: |
+          echo "Installing GitHub Copilot CLI globally..."
+          npm install -g @github/copilot
+          
+          echo "Verifying GitHub Copilot CLI installation..."
+          if command -v copilot &> /dev/null; then
+            echo "GitHub Copilot CLI found in PATH"
+            copilot --version || echo "Could not get version"
+          else
+            echo "GitHub Copilot CLI not found in PATH"
+            echo "PATH: $PATH"
+            echo "Installed npm packages:"
+            npm list -g --depth=0 | grep copilot || echo "No copilot packages found"
+            exit 1
+          fi
+
+          ISSUE_BODY_SAFE=$(echo "$ISSUE_BODY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+
+          gh auth login
+          copilot -p "$ISSUE_BODY_SAFE" --allow-all-tools > copilot_response.txt
+          # 出力結果をissueにコメントとして投稿
+          AI_RESPONSE=$(cat copilot_response.txt)
+          echo $AI_RESPONSE
+
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHC_TOKEN }}
+          ISSUE_BODY: ${{ github.event.issue.body }}

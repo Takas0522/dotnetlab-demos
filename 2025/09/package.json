@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "copilot": "copilot"
+  },
+  "dependencies": {
+    "@github/copilot": "^0.0.328"
+  }
+}

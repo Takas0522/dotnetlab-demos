@@ -1,0 +1,40 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- ナビゲーションヘッダー -->
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- ロゴ/タイトル -->
+        <div class="flex items-center">
+          <h1 class="text-xl font-bold text-gray-900">ToDo App</h1>
+        </div>
+
+        <!-- ナビゲーションメニュー -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="navigateToDashboard()"
+            class="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            ダッシュボード
+          </button>
+          <button
+            (click)="navigateToTodos()"
+            class="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            マイToDo
+          </button>
+          <button
+            (click)="navigateToSharedTodos()"
+            class="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            共有ToDo
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+</div>

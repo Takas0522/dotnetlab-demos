@@ -1,0 +1,260 @@
+name: Auto Label Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Collect Code Context
+        run: |
+          echo "Collecting code context..."
+          mkdir -p context
+          
+          # Broken pipeエラーを防ぐため、直接テキストファイルとして収集
+          echo "=== PROJECT STRUCTURE ===" > context/code_context.txt
+          find src -type f \( -name "*.cs" -o -name "*.ts" -o -name "*.js" -o -name "*.json" -o -name "*.sql" -o -name "*.md" \) | head -20 >> context/code_context.txt
+          
+          echo -e "\n=== CODE CONTENT ===" >> context/code_context.txt
+          
+          # 重要なファイルを優先して収集（Broken pipeを回避）
+          for file in $(find src -type f \( -name "*.cs" -o -name "*.ts" -o -name "*.js" \) | head -10); do
+            if [ -f "$file" ]; then
+              echo -e "\n--- $file ---" >> context/code_context.txt
+              # パイプを使わずに直接head処理
+              head -n 30 "$file" >> context/code_context.txt 2>/dev/null || true
+            fi
+          done
+          
+          # ファイルサイズを制限（4KB以内）
+          if [ -f context/code_context.txt ]; then
+            head -c 4000 context/code_context.txt > context/code_summary.txt
+            echo "Code context collected. Size: $(wc -c < context/code_summary.txt) bytes"
+          else
+            echo "No code context available" > context/code_summary.txt
+          fi
+
+      - name: Get Repository Labels
+        id: get-labels
+        run: |
+          echo "Fetching repository labels..."
+          
+          # GitHub APIからリポジトリのラベル一覧を取得
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/repos/${{ github.repository }}/labels" > labels.json
+          
+          # ラベル情報を整理（名前と説明を含む）
+          jq -r '.[] | "\(.name): \(.description // "説明なし")"' labels.json > labels_list.txt
+          
+          echo "Available labels:"
+          cat labels_list.txt
+          
+          # ラベル一覧をテキスト形式で保存
+          LABELS_TEXT=$(cat labels_list.txt)
+          echo "labels_text<<EOF" >> $GITHUB_OUTPUT
+          echo "$LABELS_TEXT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Analyze Issue with Azure OpenAI
+        id: analyze-issue
+        run: |
+          echo "Analyzing issue content with Azure OpenAI..."
+          
+          # 環境変数の確認
+          echo "AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:0:20}..."
+          echo "AZURE_OPENAI_DEPLOYMENT: $AZURE_OPENAI_DEPLOYMENT"
+          echo "AZURE_OPENAI_API_VERSION: $AZURE_OPENAI_API_VERSION"
+          echo "ISSUE_TITLE: ${ISSUE_TITLE:0:50}..."
+          echo "ISSUE_BODY length: ${#ISSUE_BODY}"
+          
+          # コードコンテキストを安全に読み取り（Broken pipeを回避）
+          if [ -f context/code_summary.txt ]; then
+            CODE_CONTEXT=$(cat context/code_summary.txt)
+            echo "Code context loaded. Length: ${#CODE_CONTEXT}"
+          else
+            CODE_CONTEXT="No code context available"
+            echo "No code context file found"
+          fi
+          
+          # Issue内容をエスケープして安全にする  
+          ISSUE_BODY_SAFE=$(echo "$ISSUE_BODY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          ISSUE_TITLE_SAFE=$(echo "$ISSUE_TITLE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          LABELS_TEXT_SAFE=$(echo "$LABELS_TEXT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037')
+          CODE_CONTEXT_SAFE=$(echo "$CODE_CONTEXT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\000-\037' | tr '\n' ' ' | tr '\r' ' ')
+          
+          echo "Escaped Issue Title: ${ISSUE_TITLE_SAFE:0:50}..."
+          echo "Escaped Issue Body length: ${#ISSUE_BODY_SAFE}"
+          echo "Escaped Labels Text length: ${#LABELS_TEXT_SAFE}"
+          echo "Escaped Code Context length: ${#CODE_CONTEXT_SAFE}"
+          
+          # システムメッセージとユーザーメッセージの作成（コードコンテキストを含む）
+          SYSTEM_MSG="あなたはGitHubリポジトリのIssue管理のエキスパートです。与えられたIssueの内容とプロジェクトのコードコンテキストを分析し、適切なラベルを選択してください。重要な制約: 1. 必ず提供されたラベル一覧からのみ選択してください - 新しいラベルを作成したり、一覧にないラベルを使用しないでください 2. 最大3つまでのラベルを選択してください 3. レスポンスは選択したラベル名のみをコンマ区切りで返してください（例: bug,frontend,priority:high） 4. ラベル名は提供された一覧に存在するもののみを使用してください - これは絶対に守ってください 5. 適切なラベルが見つからない場合のみ needs-triage を返してください（needs-triageが一覧にある場合） 6. コードコンテキストを参考にして、技術的な分野や問題の種類をより正確に判断してください 7. 一覧にないラベル名は絶対に使用しないでください"
+          
+          USER_MSG="利用可能なラベル一覧（この中からのみ選択してください）: $LABELS_TEXT_SAFE Issue情報 - タイトル: $ISSUE_TITLE_SAFE 本文: $ISSUE_BODY_SAFE プロジェクトのコードコンテキスト: $CODE_CONTEXT_SAFE 上記のIssue情報とコードコンテキストを分析し、利用可能なラベル一覧の中から適切なラベルを選択してください。一覧にないラベルは絶対に使用しないでください。"
+          
+          # jqを使用して安全なJSON構築
+          JSON_PAYLOAD=$(jq -n \
+            --arg system_msg "$SYSTEM_MSG" \
+            --arg user_msg "$USER_MSG" \
+            '{
+              "messages": [
+                {"role": "system", "content": $system_msg},
+                {"role": "user", "content": $user_msg}
+              ],
+              "max_tokens": 200,
+              "temperature": 0.1
+            }')
+          
+          echo "JSON payload created successfully"
+          echo "Payload length: ${#JSON_PAYLOAD}"
+          
+          # Azure OpenAI API呼び出し
+          echo "Calling Azure OpenAI API..."
+          echo "URL: https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION"
+          
+          RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" -X POST \
+            "https://$AZURE_OPENAI_ENDPOINT/openai/deployments/$AZURE_OPENAI_DEPLOYMENT/chat/completions?api-version=$AZURE_OPENAI_API_VERSION" \
+            -H "Content-Type: application/json" \
+            -H "api-key: $AZURE_OPENAI_API_KEY" \
+            -d "$JSON_PAYLOAD")
+          
+          curl_exit_code=$?
+          echo "curl command completed with exit code: $curl_exit_code"
+          
+          if [ $curl_exit_code -ne 0 ]; then
+            echo "curl command failed with exit code: $curl_exit_code"
+            exit $curl_exit_code
+          fi
+          
+          # HTTPステータスコードとレスポンスを分離
+          HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+          JSON_RESPONSE=$(echo "$RESPONSE" | sed 's/HTTP_CODE:[0-9]*$//')
+          
+          echo "HTTP Status Code: $HTTP_CODE"
+          echo "API Response: $JSON_RESPONSE"
+          
+          # HTTPステータスコードをチェック
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "API call failed with HTTP code: $HTTP_CODE"
+            echo "Response: $JSON_RESPONSE"
+            exit 1
+          fi
+          
+          # JSONレスポンスからラベルを抽出
+          if echo "$JSON_RESPONSE" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
+            AI_CONTENT=$(echo "$JSON_RESPONSE" | jq -r '.choices[0].message.content')
+            echo "AI suggested labels (raw): $AI_CONTENT"
+            
+            # コンマ区切りのラベルを配列に変換
+            if [ ! -z "$AI_CONTENT" ] && [ "$AI_CONTENT" != "null" ]; then
+              # コンマ区切りの文字列を配列形式に変換
+              SUGGESTED_LABELS=$(echo "$AI_CONTENT" | tr ',' '\n' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' | grep -v '^$')
+              echo "Processed labels (line by line):"
+              echo "$SUGGESTED_LABELS"
+              echo "suggested_labels<<EOF" >> $GITHUB_OUTPUT
+              echo "$SUGGESTED_LABELS" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+            else
+              echo "No valid labels suggested"
+              echo "suggested_labels=needs-triage" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Failed to parse API response"
+            echo "Response: $JSON_RESPONSE"
+            echo "suggested_labels=needs-triage" >> $GITHUB_OUTPUT
+          fi
+
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          LABELS_TEXT: ${{ steps.get-labels.outputs.labels_text }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          AZURE_OPENAI_API_VERSION: "2025-01-01-preview"
+
+      - name: Apply Labels to Issue
+        run: |
+          echo "Applying labels to issue..."
+          
+          SUGGESTED_LABELS="${{ steps.analyze-issue.outputs.suggested_labels }}"
+          
+          if [ ! -z "$SUGGESTED_LABELS" ] && [ "$SUGGESTED_LABELS" != "null" ]; then
+            # ラベルをコンマ区切りから配列に変換
+            echo "Processing suggested labels: $SUGGESTED_LABELS"
+            
+            # 改行区切りのラベルをコンマ区切りのJSON配列に変換
+            LABELS_JSON=$(echo "$SUGGESTED_LABELS" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' | grep -v '^$' | sed 's/"/\\"/g' | sed 's/.*/"&"/' | tr '\n' ',' | sed 's/,$//')
+            
+            if [ ! -z "$LABELS_JSON" ]; then
+              echo "Applying labels as JSON array: [$LABELS_JSON]"
+              
+              # GitHub APIで全ラベルを一度に適用
+              RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels" \
+                -d "{\"labels\":[$LABELS_JSON]}")
+              
+              HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+              JSON_RESPONSE=$(echo "$RESPONSE" | sed 's/HTTP_CODE:[0-9]*$//')
+              
+              if [ "$HTTP_CODE" -eq 200 ]; then
+                echo "Successfully applied all labels"
+              elif [ "$HTTP_CODE" -eq 422 ]; then
+                echo "Failed to apply labels: Some labels do not exist in repository"
+                echo "This suggests AI suggested non-existing labels - prompts may need improvement"
+                echo "Response: $JSON_RESPONSE"
+              else
+                echo "Failed to apply labels (HTTP Code: $HTTP_CODE)"
+                echo "Response: $JSON_RESPONSE"
+              fi
+            else
+              echo "No valid labels to apply"
+            fi
+            
+            echo "Label application process completed!"
+          else
+            echo "No valid labels to apply"
+          fi
+
+      - name: Comment on Issue  
+        run: |
+          echo "Adding comment to issue..."
+          
+          SUGGESTED_LABELS="${{ steps.analyze-issue.outputs.suggested_labels }}"
+          
+          if [ ! -z "$SUGGESTED_LABELS" ] && [ "$SUGGESTED_LABELS" != "null" ]; then
+            # ラベル一覧を整形
+            LABELS_LIST=$(echo "$SUGGESTED_LABELS" | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+            COMMENT="🤖 **自動ラベル付与完了**\n\nAIによってIssueの内容を分析し、適切なラベルを自動的に付与しました。\n\n**適用されたラベル:** $LABELS_LIST\n\n何か問題がある場合は、手動でラベルを調整してください。"
+          else
+            COMMENT="🤖 **自動ラベル付与**\n\nIssueの内容を分析しましたが、適切なラベルを特定できませんでした。\n\n手動でラベルを設定してください。"
+          fi
+          
+          # JSONエスケープ処理
+          COMMENT_JSON=$(echo "$COMMENT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+          
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -d "{\"body\":\"$COMMENT_JSON\"}"
+          
+          echo "Comment added to issue"
