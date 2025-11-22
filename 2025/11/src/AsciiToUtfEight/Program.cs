@@ -108,10 +108,11 @@ catch (Exception ex)
 
 static bool IsUtf8Encoded(byte[] data)
 {
-    // 空のファイルやバイナリファイルの場合
+    // 空のファイルの場合
+    // 空ファイルはエンコーディングを持たないため、UTF-8として扱い、変換処理をスキップする
     if (data.Length == 0)
     {
-        return true; // 空ファイルはUTF-8として扱う
+        return true;
     }
 
     // BOMのチェック
